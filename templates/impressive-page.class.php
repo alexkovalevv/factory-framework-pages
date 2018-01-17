@@ -22,8 +22,10 @@
 		public $internal = true;
 		
 		public $type = 'options';
+
+		public $page_parent_page;
 		
-		public $page_menu_dashicon = null;
+		public $page_menu_dashicon;
 		
 		public $page_menu_position = 10;
 		
@@ -40,7 +42,7 @@
 			
 			parent::__construct($plugin);
 			
-			global $factory_impressive_page_menu;
+			global $factory_impressive_page_menu, $factory_impressive_page_submenu;
 			
 			$dashicon = (!empty($this->page_menu_dashicon))
 				? ' ' . $this->page_menu_dashicon
@@ -52,12 +54,13 @@
 			//$this->show_right_sidebar_in_options = true;
 			//$this->show_bottom_sidebar = false;
 			//}
-			
+
 			$factory_impressive_page_menu[$plugin->pluginName][$this->getResultId()] = array(
 				'type' => $this->type, // page, options
 				'url' => $this->getBaseUrl(),
 				'title' => '<span class="dashicons' . $dashicon . '"></span> ' . $this->getMenuTitle(),
-				'position' => $this->page_menu_position
+				'position' => $this->page_menu_position,
+				'parent' => $this->page_parent_page
 			);
 		}
 		
@@ -230,23 +233,107 @@
 		protected function showPageMenu()
 		{
 			global $factory_impressive_page_menu;
-			
+
+			$page_menu = $factory_impressive_page_menu[$this->plugin->pluginName];
+			$self_page_id = $this->getResultId();
+			$current_page = isset($page_menu[$self_page_id])
+				? $page_menu[$self_page_id]
+				: null;
+
+			$parent_page_id = !empty($current_page['parent'])
+				? $this->getResultId($current_page['parent'])
+				: null;
+
 			function factory_page_menu_sort($a, $b)
 			{
 				return $a['position'] < $b['position'];
 			}
 			
-			uasort($factory_impressive_page_menu[$this->plugin->pluginName], 'factory_page_menu_sort');
+			uasort($page_menu, 'factory_page_menu_sort');
 			
 			?>
 			<ul>
-				<?php foreach($factory_impressive_page_menu[$this->plugin->pluginName] as $pageScreen => $page) { ?>
-				<li class="wbcr-factory-nav-tab <?php if( $pageScreen === $this->getResultId() ) {
-					echo 'wbcr-factory-active-tab';
-				} ?>">
-					<a href="<?php echo $page['url'] ?>" id="<?= $this->getResultId() ?>-tab"><?php echo $page['title'] ?></a>
-					</li><?php } ?>
+				<?php foreach($page_menu as $page_screen => $page): ?>
+					<?php
+					if( !empty($page['parent']) ) {
+						continue;
+					}
+					$active_tab = '';
+					if( $page_screen == $self_page_id || $page_screen == $parent_page_id ) {
+						$active_tab = ' wbcr-factory-active-tab';
+					}
+					?>
+					<li class="wbcr-factory-nav-tab<?= $active_tab ?>">
+						<a href="<?php echo $page['url'] ?>" id="<?= $page_screen ?>-tab"><?php echo $page['title'] ?></a>
+					</li>
+				<?php endforeach; ?>
 			</ul>
+		<?php
+		}
+
+		protected function showPageSubMenu()
+		{
+			global $factory_impressive_page_menu;
+			$self_page_id = $this->getResultId();
+			$page_menu = $factory_impressive_page_menu[$this->plugin->pluginName];
+			$current_page = isset($page_menu[$self_page_id])
+				? $page_menu[$self_page_id]
+				: null;
+
+			$page_submenu = array();
+			foreach($page_menu as $page_screen => $page) {
+				if( !empty($page['parent']) ) {
+					$page_parent_id = $this->getResultId($page['parent']);
+
+					if( isset($page_menu[$page_parent_id]) ) {
+						$page['title'] = strip_tags($page['title']);
+						$page_submenu[$page_parent_id][$page_screen] = $page;
+					}
+				}
+			}
+
+			if( empty($page_submenu) ) {
+				return;
+			}
+
+			$get_menu_id = null;
+			$has_parent = !empty($current_page) && !empty($current_page['parent']);
+			$parent_page_id = $has_parent
+				? $this->getResultId($current_page['parent'])
+				: null;
+
+			if( ($has_parent && isset($page_submenu[$parent_page_id])) ) {
+				$get_menu_id = $parent_page_id;
+			} else if( !$has_parent && isset($page_submenu[$self_page_id]) ) {
+				$get_menu_id = $self_page_id;
+			}
+
+			if( !isset($page_submenu[$get_menu_id]) ) {
+				return;
+			}
+
+			$unshift = array();
+			if( isset($page_menu[$get_menu_id]) ) {
+				$page_menu[$get_menu_id]['title'] = strip_tags($page_menu[$get_menu_id]['title']);
+
+				$unshift[$get_menu_id][$get_menu_id] = $page_menu[$get_menu_id];
+				$page_submenu[$get_menu_id] = $unshift[$get_menu_id] + $page_submenu[$get_menu_id];
+			}
+
+			?>
+			<h2 class="nav-tab-wrapper wp-clearfix" style="margin-top: -25px;">
+				<?php foreach((array)$page_submenu[$get_menu_id] as $page_screen => $page): ?>
+					<?php
+					$active_tab = '';
+					if( $page_screen == $this->getResultId() ) {
+						$active_tab = ' nav-tab-active';
+					}
+					?>
+					<a href="<?php echo $page['url'] ?>" id="<?= $page_screen ?>-tab" class="nav-tab<?= $active_tab ?>">
+						<?php echo $page['title'] ?>
+					</a>
+				<?php endforeach; ?>
+			</h2>
 		<?php
 		}
 		
@@ -410,11 +497,14 @@
 						?>
 						<div class="wbcr-factory-page-inner-wrap" style="min-height:<?= $min_height ?>px">
 							<div class="wbcr-factory-content-section<?php if( !$this->show_right_sidebar_in_options ): echo ' wbcr-fullwidth'; endif ?>">
-								<form method="post" class="form-horizontal">
-									<?php $this->showHeader(); ?>
-									<?php $this->showActionsNotice(); ?>
-									<?php $form->html(); ?>
-								</form>
+								<?php $this->showPageSubMenu() ?>
+								<div style="background: #f7f7f7; padding:40px 20px;border: 1px solid #dad8d8;">
+									<form method="post" class="form-horizontal">
+										<?php $this->showHeader(); ?>
+										<?php $this->showActionsNotice(); ?>
+										<?php $form->html(); ?>
+									</form>
+								</div>
 							</div>
 							<?php if( $this->show_right_sidebar_in_options ): ?>
 								<div class="wbcr-factory-right-sidebar-section">
@@ -439,17 +529,26 @@
 		
 		protected function showPage()
 		{
+			global $factory_impressive_page_menu;
 			?>
 			<div id="WBCR" class="wrap">
 				<div class="wbcr-factory-impressive-page-template-000 factory-bootstrap-000 factory-fontawesome-000">
 					<div class="wbcr-factory-page wbcr-factory-page-<?= $this->id ?>">
 						<?php $this->showHeader(); ?>
-						
+
 						<div class="wbcr-factory-left-navigation-bar">
 							<?php $this->showPageMenu() ?>
 						</div>
-						<div class="wbcr-factory-page-inner-wrap">
-							<?php $this->showPageContent() ?>
+						<?php
+							$min_height = sizeof($factory_impressive_page_menu[$this->plugin->pluginName]) * 69;
+						?>
+						<div class="wbcr-factory-page-inner-wrap" style="min-height:<?= $min_height ?>px">
+							<div class="wbcr-factory-content-section<?php if( !$this->show_right_sidebar_in_options ): echo ' wbcr-fullwidth'; endif ?>">
+								<?php $this->showPageSubMenu() ?>
+								<div style="background: #f7f7f7; padding:40px 20px;border: 1px solid #dad8d8;">
+									<?php $this->showPageContent() ?>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div class="clearfix"></div>

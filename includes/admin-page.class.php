@@ -139,13 +139,21 @@
 			$this->styles->connect();
 		}
 
-		public function getResultId()
+		/**
+		 * @param null $id
+		 * @return mixed|string
+		 */
+		public function getResultId($id = null)
 		{
+			$id = !empty($id)
+				? $id
+				: $this->id;
+
 			if( $this->plugin ) {
-				return $this->id . '-' . $this->plugin->pluginName;
+				return $id . '-' . $this->plugin->pluginName;
 			}
 
-			return $this->id;
+			return $id;
 		}
 
 		/**

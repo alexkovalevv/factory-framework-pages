@@ -66,9 +66,28 @@
 }
 #WBCR .wbcr-factory-impressive-page-template-000 .wbcr-factory-page-inner-wrap {
   margin-left: 230px;
-  padding: 120px 0 20px 20px;
+  padding: 120px 0 0 0;
   vertical-align: top;
   background: #fff;
+}
+#WBCR .wbcr-factory-impressive-page-template-000 .wbcr-factory-page-inner-wrap .nav-tab-wrapper,
+#WBCR .wbcr-factory-impressive-page-template-000 .wbcr-factory-page-inner-wrap h2.nav-tab-wrapper,
+#WBCR .wbcr-factory-impressive-page-template-000 .wbcr-factory-page-inner-wrap h1.nav-tab-wrapper {
+  border: 0;
+}
+#WBCR .wbcr-factory-impressive-page-template-000 .wbcr-factory-page-inner-wrap .nav-tab-active {
+  background: #f7f7f7;
+}
+#WBCR .wbcr-factory-impressive-page-template-000 .wbcr-factory-page-inner-wrap .nav-tab:first-child {
+  margin-left: 80px;
+}
+#WBCR .wbcr-factory-impressive-page-template-000 .wbcr-factory-page-inner-wrap .nav-tab:hover {
+  background: #f7f7f7;
+}
+#WBCR .wbcr-factory-impressive-page-template-000 .wbcr-factory-page-inner-wrap .nav-tab:active,
+#WBCR .wbcr-factory-impressive-page-template-000 .wbcr-factory-page-inner-wrap .nav-tab:focus {
+  box-shadow: none;
+  outline: none;
 }
 #WBCR .wbcr-factory-impressive-page-template-000 .wbcr-factory-page-header {
   position: absolute;
