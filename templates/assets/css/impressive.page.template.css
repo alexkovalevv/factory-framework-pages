@@ -309,9 +309,12 @@
   padding: 30px;
   border: 1px solid #f3f1e7;
 }
-#WBCR .wbcr-factory-impressive-page-template-000 .wbcr-factory-page-more_features .wbcr-factory-feature-box .fa {
-  font-size: 40px;
+#WBCR .wbcr-factory-impressive-page-template-000 .wbcr-factory-page-more_features .wbcr-factory-feature-box .dashicons {
+  width: 50px;
+  height: 50px;
+  font-size: 50px;
   color: #FFC107;
+  line-height: normal;
 }
 #WBCR .wbcr-factory-impressive-page-template-000 .wbcr-factory-page-more_features .wbcr-factory-feature-box h3 {
   color: #7b6111;
