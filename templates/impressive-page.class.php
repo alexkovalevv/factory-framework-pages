@@ -98,17 +98,13 @@
 			$this->scripts->request(array(
 				'control.checkbox',
 				'control.dropdown',
-				'bootstrap.tooltip',
-				'holder.more-link',
-				'bootstrap.tab',
+				'bootstrap.tooltip'
 			), 'bootstrap');
 			
 			$this->styles->request(array(
 				'bootstrap.core',
 				'bootstrap.form-group',
 				'bootstrap.separator',
-				'bootstrap.tab',
-				'holder.more-link',
 				'control.dropdown',
 				'control.checkbox'
 			), 'bootstrap');
