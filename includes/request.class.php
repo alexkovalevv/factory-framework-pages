@@ -33,9 +33,15 @@
 
 			if( !empty($param) ) {
 				if( isset($method[$param]) && !empty($method[$param]) ) {
-					return !empty($sanitize)
-						? call_user_func($sanitize_function_name, $method[$param])
-						: $method[$param];
+					if( is_array($method[$param]) ) {
+						return !empty($sanitize)
+							? array_map($sanitize_function_name, $method[$param])
+							: $method[$param];
+					} else {
+						return !empty($sanitize)
+							? call_user_func($sanitize_function_name, $method[$param])
+							: $method[$param];
+					}
 				}
 
 				return $default;
