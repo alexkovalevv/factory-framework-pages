@@ -491,10 +491,10 @@
 						<?php
 							$min_height = sizeof($factory_impressive_page_menu[$this->plugin->pluginName]) * 69;
 						?>
-						<div class="wbcr-factory-page-inner-wrap" style="min-height:<?= $min_height ?>px">
+						<div class="wbcr-factory-page-inner-wrap">
 							<div class="wbcr-factory-content-section<?php if( !$this->show_right_sidebar_in_options ): echo ' wbcr-fullwidth'; endif ?>">
 								<?php $this->showPageSubMenu() ?>
-								<div class="wbcr-factory-content">
+								<div class="wbcr-factory-content" style="min-height:<?= $min_height ?>px">
 									<form method="post" class="form-horizontal">
 										<?php $this->showHeader(); ?>
 										<?php $this->showActionsNotice(); ?>
@@ -538,10 +538,10 @@
 						<?php
 							$min_height = sizeof($factory_impressive_page_menu[$this->plugin->pluginName]) * 69;
 						?>
-						<div class="wbcr-factory-page-inner-wrap" style="min-height:<?= $min_height ?>px">
+						<div class="wbcr-factory-page-inner-wrap">
 							<div class="wbcr-factory-content-section<?php if( !$this->show_right_sidebar_in_options ): echo ' wbcr-fullwidth'; endif ?>">
 								<?php $this->showPageSubMenu() ?>
-								<div class="wbcr-factory-content">
+								<div class="wbcr-factory-content" style="min-height:<?= $min_height ?>px">
 									<?php $this->showPageContent() ?>
 								</div>
 							</div>
