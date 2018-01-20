@@ -42,7 +42,7 @@
 			
 			parent::__construct($plugin);
 			
-			global $factory_impressive_page_menu, $factory_impressive_page_submenu;
+			global $factory_impressive_page_menu;
 			
 			$dashicon = (!empty($this->page_menu_dashicon))
 				? ' ' . $this->page_menu_dashicon
@@ -321,7 +321,7 @@
 			}
 
 			?>
-			<h2 class="nav-tab-wrapper wp-clearfix" style="margin-top: -25px;">
+			<h2 class="nav-tab-wrapper wp-clearfix">
 				<?php foreach((array)$page_submenu[$get_menu_id] as $page_screen => $page): ?>
 					<?php
 					$active_tab = '';
@@ -498,7 +498,7 @@
 						<div class="wbcr-factory-page-inner-wrap" style="min-height:<?= $min_height ?>px">
 							<div class="wbcr-factory-content-section<?php if( !$this->show_right_sidebar_in_options ): echo ' wbcr-fullwidth'; endif ?>">
 								<?php $this->showPageSubMenu() ?>
-								<div style="background: #f7f7f7; padding:40px 20px;border: 1px solid #dad8d8;">
+								<div class="wbcr-factory-content">
 									<form method="post" class="form-horizontal">
 										<?php $this->showHeader(); ?>
 										<?php $this->showActionsNotice(); ?>
@@ -545,7 +545,7 @@
 						<div class="wbcr-factory-page-inner-wrap" style="min-height:<?= $min_height ?>px">
 							<div class="wbcr-factory-content-section<?php if( !$this->show_right_sidebar_in_options ): echo ' wbcr-fullwidth'; endif ?>">
 								<?php $this->showPageSubMenu() ?>
-								<div style="background: #f7f7f7; padding:40px 20px;border: 1px solid #dad8d8;">
+								<div class="wbcr-factory-content">
 									<?php $this->showPageContent() ?>
 								</div>
 							</div>
@@ -597,6 +597,8 @@
 			} else {
 				$page_url = $args[0];
 			}
+
+			$page_url = apply_filters('wbcr_factory_imppage_rating_widget_url', $page_url, $this->plugin->pluginName, $this->getResultId());
 			
 			?>
 			<div class="wbcr-factory-sidebar-widget">
