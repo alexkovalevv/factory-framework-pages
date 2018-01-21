@@ -199,7 +199,7 @@
 				)
 			);
 			
-			$notices = apply_filters('wbcr_factory_imppage_actions_notice', $notices);
+			$notices = apply_filters('wbcr_factory_imppage_actions_notice', $notices, $this->plugin, $this->id);
 			
 			foreach($notices as $key => $notice) {
 				$show_message = true;
@@ -489,7 +489,12 @@
 							<?php $this->showPageMenu() ?>
 						</div>
 						<?php
-							$min_height = sizeof($factory_impressive_page_menu[$this->plugin->pluginName]) * 69;
+							$min_height = 0;
+							foreach($factory_impressive_page_menu[$this->plugin->pluginName] as $page) {
+								if( !isset($page['parent']) || empty($page['parent']) ) {
+									$min_height += 61;
+								}
+							}
 						?>
 						<div class="wbcr-factory-page-inner-wrap">
 							<div class="wbcr-factory-content-section<?php if( !$this->show_right_sidebar_in_options ): echo ' wbcr-fullwidth'; endif ?>">
@@ -536,7 +541,12 @@
 							<?php $this->showPageMenu() ?>
 						</div>
 						<?php
-							$min_height = sizeof($factory_impressive_page_menu[$this->plugin->pluginName]) * 69;
+							$min_height = 0;
+							foreach($factory_impressive_page_menu[$this->plugin->pluginName] as $page) {
+								if( !isset($page['parent']) || empty($page['parent']) ) {
+									$min_height += 61;
+								}
+							}
 						?>
 						<div class="wbcr-factory-page-inner-wrap">
 							<div class="wbcr-factory-content-section<?php if( !$this->show_right_sidebar_in_options ): echo ' wbcr-fullwidth'; endif ?>">
