@@ -552,6 +552,7 @@
 							<div class="wbcr-factory-content-section<?php if( !$this->show_right_sidebar_in_options ): echo ' wbcr-fullwidth'; endif ?>">
 								<?php $this->showPageSubMenu() ?>
 								<div class="wbcr-factory-content" style="min-height:<?= $min_height ?>px">
+									<?php $this->showActionsNotice(); ?>
 									<?php $this->showPageContent() ?>
 								</div>
 							</div>
