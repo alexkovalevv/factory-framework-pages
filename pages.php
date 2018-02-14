@@ -1,49 +1,87 @@
 <?php
-/**
- * A group of classes and methods to create and manage pages.
- * 
- * @author Paul Kashtanoff <paul@byonepress.com>
- * @copyright (c) 2013, OnePress Ltd
- * 
- * @package core 
- * @since 1.0.0
- */
+	/**
+	 * A group of classes and methods to create and manage pages.
+	 *
+	 * @author Alex Kovalev <alex.kovalevv@gmail.com>
+	 * @copyright (c) 2018, Webcraftic Ltd
+	 *
+	 * @package core
+	 * @since 1.0.0
+	 */
 
-add_action('admin_menu', 'FactoryPages000::actionAdminMenu');
+	// Exit if accessed directly
+	if( !defined('ABSPATH') ) {
+		exit;
+	}
 
-/**
- * A base class to manage pages. 
- * 
- * @since 1.0.0
- */
-class FactoryPages000 {
+	add_action('admin_menu', 'Wbcr_FactoryPages000::actionAdminMenu');
 
-    private static $pages = array();
+	if( !class_exists('Wbcr_FactoryPages000') ) {
+		/**
+		 * A base class to manage pages.
+		 *
+		 * @since 1.0.0
+		 */
+		class Wbcr_FactoryPages000 {
 
-    public static function register( $plugin, $className ) {
-        if ( !isset( self::$pages[$plugin->pluginName] ) ) self::$pages[$plugin->pluginName] = array();
-        self::$pages[$plugin->pluginName][] = new $className( $plugin );
-    }
-        
-    public static function actionAdminMenu() {
-        if ( empty(self::$pages) ) return;
+			/**
+			 * @var Wbcr_FactoryPages000_Page[]
+			 */
+			private static $pages = array();
+			
+			/**
+			 * @param Wbcr_Factory000_Plugin $plugin
+			 * @param $class_name
+			 */
+			public static function register($plugin, $class_name)
+			{
+				if( !isset(self::$pages[$plugin->getPluginName()]) ) {
+					self::$pages[$plugin->getPluginName()] = array();
+				}
+				self::$pages[$plugin->getPluginName()][] = new $class_name($plugin);
+			}
 
-        foreach(self::$pages as $pluginPages) {
-            foreach($pluginPages as $page) {
-                $page->connect();
-            }
-        }
-    }
-    
-    public static function getIds( $plugin ){
-        if ( !isset( self::$pages[$plugin->pluginName] ) ) return array();
-        
-        $result = array();
-        foreach(self::$pages[$plugin->pluginName] as $page) $result[] = $page->getResultId();
-        return $result;
-    }
-}
+			public static function actionAdminMenu()
+			{
+				if( empty(self::$pages) ) {
+					return;
+				}
 
-function factory_pages_000_get_page_id( $plugin, $pureId ) {
-    return $pureId . '-' . $plugin->pluginName;
-}
+				foreach(self::$pages as $plugin_pages) {
+					foreach($plugin_pages as $page) {
+						$page->connect();
+					}
+				}
+			}
+
+			/**
+			 * @param Wbcr_Factory000_Plugin $plugin
+			 * @return array
+			 */
+			public static function getIds($plugin)
+			{
+				if( !isset(self::$pages[$plugin->getPluginName()]) ) {
+					return array();
+				}
+
+				$result = array();
+				foreach(self::$pages[$plugin->getPluginName()] as $page)
+					$result[] = $page->getResultId();
+
+				return $result;
+			}
+		}
+	}
+
+	if( !function_exists('factory_pages_000_get_page_id') ) {
+		/**
+		 *
+		 * @param Wbcr_Factory000_Plugin $plugin
+		 * @param string $page_id
+		 * @return string
+		 */
+		function factory_pages_000_get_page_id($plugin, $page_id)
+		{
+			return $page_id . '-' . $plugin->getPluginName();
+		}
+	}
