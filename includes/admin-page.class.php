@@ -237,7 +237,7 @@
 					$this->assets($this->scripts, $this->styles);
 					
 					if( !$this->scripts->isEmpty('bootstrap') || !$this->styles->isEmpty('bootstrap') ) {
-						add_action('wbcr_factory_bootstrap_enqueue_scripts_' . $this->plugin->getPluginName(), array(
+						add_action('wbcr_factory_000_bootstrap_enqueue_scripts_' . $this->plugin->getPluginName(), array(
 							$this,
 							'actionAdminBootstrapScripts'
 						));
