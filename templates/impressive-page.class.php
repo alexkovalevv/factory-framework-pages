@@ -376,7 +376,7 @@
 					<?php if( $this->type == 'options' ): ?>
 						<div class="wbcr-factory-control">
 						<input name="<?= $this->plugin->getPluginName() ?>_save_action" class="wbcr-factory-type-save" type="submit" value="<?php _e('Save settings', 'factory_pages_000'); ?>">
-						<?php wp_nonce_field('wbcr_factory_save_action', 'wbcr_factory_save'); ?>
+						<?php wp_nonce_field('wbcr_factory_' . $this->getResultId() . '_save_action'); ?>
 						</div><?php endif; ?>
 				</div>
 			<?php
@@ -476,14 +476,16 @@
 				
 				$form->add($options);
 				
-				if( isset($_POST[$this->plugin->getPluginName() . '_save_action']) && isset($_POST['wbcr_factory_save']) ) {
-					
-					if( !wp_verify_nonce($_POST['wbcr_factory_save'], 'wbcr_factory_save_action') || !current_user_can('manage_options') ) {
+				if( isset($_POST[$this->plugin->getPluginName() . '_save_action']) ) {
+
+					check_admin_referer('wbcr_factory_' . $this->getResultId() . '_save_action');
+
+					if( !current_user_can('manage_options') ) {
 						wp_die(__('You do not have permission to edit page.', 'factory_pages_000'));
 						exit;
 					}
 					
-					do_action('wbcr_factory_000_imppage_before_save', $form);
+					do_action('wbcr_factory_000_imppage_before_save', $form, $this->plugin->getPluginName());
 					
 					$form->save();
 					
@@ -498,7 +500,7 @@
 						$GLOBALS['wp_fastest_cache']->deleteCache();
 					}
 					
-					do_action('wbcr_factory_000_imppage_saved', $form);
+					do_action('wbcr_factory_000_imppage_saved', $form, $this->plugin->getPluginName());
 					
 					$this->redirectToAction('index', array(
 						$this->plugin->getPluginName() . '_saved' => 1

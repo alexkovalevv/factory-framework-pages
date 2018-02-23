@@ -6,7 +6,7 @@
 
 #WBCR {
 
-  .updated, .notice {
+  .updated, .notice, .error {
     display: none !important;
   }
 
@@ -81,6 +81,23 @@
         display: block;
         content: '';
         clear: both;
+      }
+    }
+
+    .wbcr-factory-page-group-header {
+      background: #efefef;
+      padding: 20px 0 10px 20px;
+      margin: 30px 0;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+      &:first-child {
+        margin-top: 0;
+      }
+      strong {
+        font-size: 15px;
+      }
+      p {
+        color: #8c8888;
+        font-size: 12px;
       }
     }
 
@@ -268,7 +285,8 @@
       }
       .wbcr-factory-content {
         background: #f7f7f7;
-        padding: 40px 20px;
+        //padding: 40px 20px;
+        padding: 0 0 20px 0;
         border: 1px solid #dad8d8;
         box-shadow: -1px 0px 1px rgba(0, 0, 0, 0.1);
       }

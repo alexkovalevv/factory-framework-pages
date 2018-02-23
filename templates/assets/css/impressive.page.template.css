@@ -4,7 +4,8 @@
  * @copyright Alex Kovalev 23.08.2017 
  */
 #WBCR .updated,
-#WBCR .notice {
+#WBCR .notice,
+#WBCR .error {
   display: none !important;
 }
 #WBCR .wbcr-factory-impressive-page-template-000 {
@@ -67,6 +68,22 @@
   display: block;
   content: '';
   clear: both;
+}
+#WBCR .wbcr-factory-impressive-page-template-000 .wbcr-factory-page-group-header {
+  background: #efefef;
+  padding: 20px 0 10px 20px;
+  margin: 30px 0;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+}
+#WBCR .wbcr-factory-impressive-page-template-000 .wbcr-factory-page-group-header:first-child {
+  margin-top: 0;
+}
+#WBCR .wbcr-factory-impressive-page-template-000 .wbcr-factory-page-group-header strong {
+  font-size: 15px;
+}
+#WBCR .wbcr-factory-impressive-page-template-000 .wbcr-factory-page-group-header p {
+  color: #8c8888;
+  font-size: 12px;
 }
 #WBCR .wbcr-factory-impressive-page-template-000 .wbcr-factory-page-inner-wrap {
   margin-left: 230px;
@@ -230,7 +247,7 @@
 }
 #WBCR .wbcr-factory-impressive-page-template-000 .wbcr-factory-content-section .wbcr-factory-content {
   background: #f7f7f7;
-  padding: 40px 20px;
+  padding: 0 0 20px 0;
   border: 1px solid #dad8d8;
   box-shadow: -1px 0px 1px rgba(0, 0, 0, 0.1);
 }
