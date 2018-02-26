@@ -226,7 +226,7 @@
 					)
 				);
 				
-				$notices = apply_filters('wbcr_factory_imppage_actions_notice', $notices, $this->plugin, $this->id);
+				$notices = apply_filters('wbcr_factory_pages_000_imppage_actions_notice', $notices, $this->plugin, $this->id);
 				
 				foreach($notices as $key => $notice) {
 					$show_message = true;
@@ -384,7 +384,7 @@
 			
 			protected function showRightSidebar()
 			{
-				$widgets = apply_filters('wbcr_factory_imppage_right_sidebar_widgets', array(
+				$widgets = apply_filters('wbcr_factory_pages_000_imppage_right_sidebar_widgets', array(
 					'info_widget' => $this->getInfoWidget(),
 					'rating_widget' => $this->getRatingWidget(),
 					'donate_widget' => $this->getDonateWidget()
@@ -402,7 +402,7 @@
 			protected function showBottomSidebar()
 			{
 				
-				$widgets = apply_filters('wbcr_factory_imppage_bottom_sidebar_widgets', array(
+				$widgets = apply_filters('wbcr_factory_pages_000_imppage_bottom_sidebar_widgets', array(
 					'info_widget' => $this->getInfoWidget(),
 					'rating_widget' => $this->getRatingWidget(),
 					'donate_widget' => $this->getDonateWidget()
@@ -639,7 +639,7 @@
 					$page_url = $args[0];
 				}
 				
-				$page_url = apply_filters('wbcr_factory_imppage_rating_widget_url', $page_url, $this->plugin->getPluginName(), $this->getResultId());
+				$page_url = apply_filters('wbcr_factory_pages_000_imppage_rating_widget_url', $page_url, $this->plugin->getPluginName(), $this->getResultId());
 				
 				?>
 				<div class="wbcr-factory-sidebar-widget">
