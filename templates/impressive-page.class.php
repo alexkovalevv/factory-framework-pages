@@ -140,22 +140,33 @@
 				//$this->styles->add('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 			}
 			
-			
+			/**
+			 * @return string
+			 */
 			public function getMenuTitle()
 			{
 				return $this->menu_title;
 			}
-			
+
+			/**
+			 * @return string
+			 */
 			public function getPageTitle()
 			{
 				return $this->getMenuTitle();
 			}
-			
+
+			/**
+			 * @return string
+			 */
 			public function getPluginTitle()
 			{
 				return $this->plugin->getPluginTitle();
 			}
-			
+
+			/**
+			 * @return string
+			 */
 			public function getPageUrl()
 			{
 				return $this->getBaseUrl();
@@ -171,7 +182,10 @@
 			{
 				return $this->plugin->getOption($option_name, $default);
 			}
-			
+
+			/**
+			 * @return string
+			 */
 			protected function getBaseUrl()
 			{
 				$result_id = $this->getResultId();
@@ -209,9 +223,19 @@
 			
 			public function printWarningNotice($message)
 			{
-				echo '<div class="alert alert-warning wbcr-factory-warning-notice"><p>' . $message . '</p></div>';
+				echo '<div class="alert alert-warning wbcr-factory-warning-notice"><p><span class="dashicons dashicons-warning"></span> ' . $message . '</p></div>';
 			}
-			
+
+			public function printErrorNotice($message)
+			{
+				echo '<div class="alert alert-danger wbcr-factory-warning-notice"><p><span class="dashicons dashicons-dismiss"></span> ' . $message . '</p></div>';
+			}
+
+			public function printSuccessNotice($message)
+			{
+				echo '<div class="alert alert-success wbcr-factory-warning-notice"><p><span class="dashicons dashicons-plus"></span> ' . $message . '</p></div>';
+			}
+
 			protected function showActionsNotice()
 			{
 				$notices = array(
@@ -245,11 +269,18 @@
 					$notice_type = isset($notice['type'])
 						? $notice['type']
 						: 'success';
-					?>
-					<div id="message" class="alert alert-<?= esc_attr($notice_type) ?>" style="margin-top:-40px;margin-bottom:40px;">
-						<p><?= $notice['message'] ?></p>
-					</div>
-				<?php
+
+					switch( $notice_type ) {
+						case 'success':
+							$this->printSuccessNotice($notice['message']);
+							break;
+						case 'danger':
+							$this->printErrorNotice($notice['message']);
+							break;
+						default:
+							$this->printWarningNotice($notice['message']);
+							break;
+					}
 				}
 			}
 			
@@ -480,7 +511,7 @@
 
 					check_admin_referer('wbcr_factory_' . $this->getResultId() . '_save_action');
 
-					if( !current_user_can('manage_options') ) {
+					if( !current_user_can('administrator') && !current_user_can($this->capabilitiy) ) {
 						wp_die(__('You do not have permission to edit page.', 'factory_pages_000'));
 						exit;
 					}
@@ -509,7 +540,7 @@
 				
 				?>
 				<div id="WBCR" class="wrap">
-					<div class="wbcr-factory-impressive-page-template-000 factory-bootstrap-000 factory-fontawesome-000">
+					<div class="wbcr-factory-pages-000-impressive-page-template factory-bootstrap-000 factory-fontawesome-000">
 						<div class="wbcr-factory-options wbcr-factory-options-<?= esc_attr($this->id) ?>">
 							<div class="wbcr-factory-left-navigation-bar">
 								<?php $this->showPageMenu() ?>
@@ -559,7 +590,7 @@
 				global $factory_impressive_page_menu;
 				?>
 				<div id="WBCR" class="wrap">
-					<div class="wbcr-factory-impressive-page-template-000 factory-bootstrap-000 factory-fontawesome-000">
+					<div class="wbcr-factory-pages-000-impressive-page-template factory-bootstrap-000 factory-fontawesome-000">
 						<div class="wbcr-factory-page wbcr-factory-page-<?= $this->id ?>">
 							<?php $this->showHeader(); ?>
 							
@@ -694,7 +725,7 @@
 			{
 				?>
 				<div id="WBCR" class="wrap">
-					<div class="wbcr-factory-impressive-page-template-000 factory-bootstrap-000 factory-fontawesome-000">
+					<div class="wbcr-factory-pages-000-impressive-page-template factory-bootstrap-000 factory-fontawesome-000">
 						<div id="wbcr-factory-confirm-dialog">
 							<h2><?php echo $data['title'] ?></h2>
 							

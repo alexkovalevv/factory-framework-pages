@@ -10,7 +10,7 @@
     display: none !important;
   }
 
-  .wbcr-factory-impressive-page-template-000 {
+  .wbcr-factory-pages-000-impressive-page-template {
     position: relative;
 
     .form-group label {
@@ -39,11 +39,39 @@
     }
 
     .alert {
-      margin: 0px;
-      margin-bottom: 20px;
       font-weight: bold;
-      padding: 10px;
-      margin-top: -15px !important;
+      margin: 0 !important;
+      border: 0;
+      border-radius: 0;
+      padding: 15px;
+
+      & + .wbcr-factory-page-group-header {
+        margin-top: 0 !important;
+      }
+
+      &.alert-warning {
+        background: #fff3d0;
+      }
+
+      &.alert-warning:nth-child(2n+1) {
+        background: #fffde9;
+      }
+
+      &.alert-danger {
+        background: #de716d;
+      }
+
+      &.alert-danger:nth-child(2n+1) {
+        background: #ec8c89;
+      }
+
+      &.alert-success {
+        background: #d0ecc4;
+      }
+
+      &.alert-success:nth-child(2n+1) {
+        background: #e0eadb;
+      }
     }
 
     .hint-warnign-color {
@@ -453,7 +481,7 @@
 
 @media screen and (max-width: 950px) {
   #WBCR {
-    .wbcr-factory-impressive-page-template-000 {
+    .wbcr-factory-pages-000-impressive-page-template {
       .wbcr-factory-left-navigation-bar {
         width: 70px;
 

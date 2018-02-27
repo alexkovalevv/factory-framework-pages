@@ -222,16 +222,7 @@
 						}
 					}
 				}
-				
-				// executes an action
-				if( $this->current() ) {
-					ob_start();
-					$action = $this->request->get('action', 'index', true);
-					$this->executeByName($action);
-					$this->result = ob_get_contents();
-					ob_end_clean();
-				}
-				
+
 				// calls scripts and styles, adds pages to menu
 				if( $this->request->get('page', 'none') == $result_id ) {
 					$this->assets($this->scripts, $this->styles);
@@ -298,6 +289,15 @@
 					}
 					
 					add_action('admin_head', array($this, 'actionAdminHead'));
+				}
+
+				// executes an action
+				if( $this->current() ) {
+					ob_start();
+					$action = $this->request->get('action', 'index', true);
+					$this->executeByName($action);
+					$this->result = ob_get_contents();
+					ob_end_clean();
 				}
 			}
 			
