@@ -124,7 +124,7 @@
   background: #efefef;
 }
 #WBCR .wbcr-factory-pages-000-impressive-page-template .wbcr-factory-page-inner-wrap .nav-tab:first-child {
-  margin-left: 80px;
+  margin-left: 80px !important;
 }
 #WBCR .wbcr-factory-pages-000-impressive-page-template .wbcr-factory-page-inner-wrap .nav-tab:hover {
   background: #f7f7f7;
