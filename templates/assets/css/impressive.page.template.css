@@ -17,6 +17,9 @@
       Widget in the sidebar of the plugin
     */
 }
+#WBCR .wbcr-factory-pages-000-impressive-page-template .form-group {
+  padding: 0 20px;
+}
 #WBCR .wbcr-factory-pages-000-impressive-page-template .form-group label {
   font-weight: normal;
 }
@@ -118,7 +121,7 @@
   border: 0;
 }
 #WBCR .wbcr-factory-pages-000-impressive-page-template .wbcr-factory-page-inner-wrap .nav-tab-active {
-  background: #f7f7f7;
+  background: #efefef;
 }
 #WBCR .wbcr-factory-pages-000-impressive-page-template .wbcr-factory-page-inner-wrap .nav-tab:first-child {
   margin-left: 80px;
@@ -271,6 +274,9 @@
   padding: 0 0 20px 0;
   border: 1px solid #dad8d8;
   box-shadow: -1px 0px 1px rgba(0, 0, 0, 0.1);
+}
+#WBCR .wbcr-factory-pages-000-impressive-page-template .wbcr-factory-content-section .wbcr-factory-content > form {
+  padding-top: 0 !important;
 }
 #WBCR .wbcr-factory-pages-000-impressive-page-template .wbcr-factory-right-sidebar-section {
   width: 40%;

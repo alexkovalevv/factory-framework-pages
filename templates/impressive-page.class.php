@@ -298,13 +298,7 @@
 					? $this->getResultId($current_page['parent'])
 					: null;
 				
-				function factory_page_menu_sort($a, $b)
-				{
-					return $a['position'] < $b['position'];
-				}
-				
-				uasort($page_menu, 'factory_page_menu_sort');
-				
+				uasort($page_menu, array($this, 'pageMenuSort'));
 				?>
 				<ul>
 					<?php foreach($page_menu as $page_screen => $page): ?>
@@ -318,11 +312,23 @@
 						}
 						?>
 						<li class="wbcr-factory-nav-tab<?= $active_tab ?>">
-							<a href="<?php echo $page['url'] ?>" id="<?= $page_screen ?>-tab"><?php echo $page['title'] ?></a>
+							<a href="<?php echo $page['url'] ?>" id="<?= $page_screen ?>-tab">
+								<?php echo $page['title'] ?>
+							</a>
 						</li>
 					<?php endforeach; ?>
 				</ul>
 			<?php
+			}
+
+			/**
+			 * @param int $a
+			 * @param int $b
+			 * @return bool
+			 */
+			protected function pageMenuSort($a, $b)
+			{
+				return $a['position'] < $b['position'];
 			}
 			
 			protected function showPageSubMenu()

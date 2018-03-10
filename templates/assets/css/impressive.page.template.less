@@ -13,8 +13,11 @@
   .wbcr-factory-pages-000-impressive-page-template {
     position: relative;
 
-    .form-group label {
-      font-weight: normal;
+    .form-group {
+      padding: 0 20px;
+      label {
+        font-weight: normal;
+      }
     }
 
     .form-horizontal .control-label {
@@ -148,7 +151,7 @@
         border: 0;
       }
       .nav-tab-active {
-        background: #f7f7f7;
+        background: #efefef;
       }
       .nav-tab:first-child {
         margin-left: 80px;
@@ -313,10 +316,12 @@
       }
       .wbcr-factory-content {
         background: #f7f7f7;
-        //padding: 40px 20px;
         padding: 0 0 20px 0;
         border: 1px solid #dad8d8;
         box-shadow: -1px 0px 1px rgba(0, 0, 0, 0.1);
+        & > form {
+          padding-top: 0 !important;
+        }
       }
     }
 
