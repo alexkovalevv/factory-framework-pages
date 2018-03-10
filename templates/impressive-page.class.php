@@ -15,7 +15,13 @@
 	}
 	
 	if( !class_exists('Wbcr_FactoryPages000_ImpressiveThemplate') ) {
-		
+		/**
+		 * Class Wbcr_FactoryPages000_ImpressiveThemplate
+		 *
+		 * @method string getInfoWidget() - get widget content information
+		 * @method string getRatingWidget(array $args = array()) - get widget content rating
+		 * @method string getDonateWidget() - get widget content donate
+		 */
 		abstract class Wbcr_FactoryPages000_ImpressiveThemplate extends Wbcr_FactoryPages000_AdminPage {
 			
 			//public $menu_target = 'options-general.php';
@@ -213,6 +219,34 @@
 					$this->showPage();
 				}
 			}
+
+			/**
+			 * Flush cache and rules
+			 *
+			 * @sinve 4.0.0
+			 * @return void
+			 */
+			public function flushCacheAndRulesAction()
+			{
+				check_admin_referer('wbcr_factory_' . $this->getResultId() . '_flush_action');
+
+				// todo: test cache control
+				if( function_exists('w3tc_pgcache_flush') ) {
+					w3tc_pgcache_flush();
+				} elseif( function_exists('wp_cache_clear_cache') ) {
+					wp_cache_clear_cache();
+				} elseif( function_exists('rocket_clean_files') ) {
+					rocket_clean_files(esc_url($_SERVER['HTTP_REFERER']));
+				} else if( isset($GLOBALS['wp_fastest_cache']) && method_exists($GLOBALS['wp_fastest_cache'], 'deleteCache') ) {
+					$GLOBALS['wp_fastest_cache']->deleteCache();
+				}
+
+				do_action('wbcr_factory_000_imppage_flush_cache', $this->plugin->getPluginName());
+
+				$this->redirectToAction('index', apply_filters('wbcr_factory_000_imppage_flush_redirect_args', array(
+					$this->plugin->getPluginName() . '_saved' => 1
+				)));
+			}
 			
 			public function warningNotice()
 			{
@@ -340,7 +374,7 @@
 						$page_parent_id = $this->getResultId($page['parent']);
 						
 						if( isset($page_menu[$page_parent_id]) ) {
-							$page['title'] = strip_tags($page['title']);
+							//$page['title'] = strip_tags($page['title'], '<b><span>');
 							$page_submenu[$page_parent_id][$page_screen] = $page;
 						}
 					}
@@ -419,7 +453,7 @@
 					'info_widget' => $this->getInfoWidget(),
 					'rating_widget' => $this->getRatingWidget(),
 					'donate_widget' => $this->getDonateWidget()
-				), $this->id);
+				), $this->getResultId());
 				
 				if( empty($widgets) ) {
 					return;
@@ -437,7 +471,7 @@
 					'info_widget' => $this->getInfoWidget(),
 					'rating_widget' => $this->getRatingWidget(),
 					'donate_widget' => $this->getDonateWidget()
-				), $this->id);
+				), $this->getResultId());
 				
 				if( empty($widgets) ) {
 					return;
@@ -520,21 +554,10 @@
 					
 					$form->save();
 					
-					// todo: test cache control
-					if( function_exists('w3tc_pgcache_flush') ) {
-						w3tc_pgcache_flush();
-					} elseif( function_exists('wp_cache_clear_cache') ) {
-						wp_cache_clear_cache();
-					} elseif( function_exists('rocket_clean_files') ) {
-						rocket_clean_files(esc_url($_SERVER['HTTP_REFERER']));
-					} else if( isset($GLOBALS['wp_fastest_cache']) && method_exists($GLOBALS['wp_fastest_cache'], 'deleteCache') ) {
-						$GLOBALS['wp_fastest_cache']->deleteCache();
-					}
-					
 					do_action('wbcr_factory_000_imppage_saved', $form, $this->plugin->getPluginName());
 					
-					$this->redirectToAction('index', array(
-						$this->plugin->getPluginName() . '_saved' => 1
+					$this->redirectToAction('flush-cache-and-rules', array(
+						'_wpnonce' => wp_create_nonce('wbcr_factory_' . $this->getResultId() . '_flush_action')
 					));
 				}
 				
@@ -746,54 +769,6 @@
 					</div>
 				</div>
 			<?php
-			}
-			
-			public function actionAdminHead()
-			{
-				$result_id = $this->getResultId();
-				
-				if( !empty($this->menuIcon) ) {
-					
-					if( preg_match('/\\\f\d{3}/', $this->menuIcon) ) {
-						$icon_code = $this->menuIcon;
-					} else {
-						$plugin_path_info = $this->plugin->getPluginPathInfo();
-						$icon_url = str_replace('~/', $plugin_path_info->plugin_url . '/', $this->menu_icon);
-					}
-				}
-				
-				?>
-				<style type="text/css" media="screen">
-					<?php if( !empty($icon_url) ) { ?>
-					
-					a.current.menu-top.toplevel_page_<?php echo $result_id ?> {
-						background: #1b1b1b !important;
-						color: #fff !important;
-					}
-					
-					a.toplevel_page_<?php echo $result_id ?> .wp-menu-image {
-						background: url('<?php echo $icon_url ?>') no-repeat 15px 2px !important;
-					}
-					
-					<?php } ?>
-					
-					a.toplevel_page_<?php echo $result_id ?> .wp-menu-image:before {
-						content: "<?php echo !empty($icon_code)
-			? $icon_code
-			: ''; ?>" !important;
-					}
-				</style>
-				<?php
-				
-				if( $this->internal ) {
-					?>
-					<style type="text/css" media="screen">
-						li.toplevel_page_<?php echo $result_id ?> {
-							display: none;
-						}
-					</style>
-				<?php
-				}
 			}
 		}
 	}
