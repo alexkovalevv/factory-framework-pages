@@ -241,7 +241,7 @@
 					$GLOBALS['wp_fastest_cache']->deleteCache();
 				}
 
-				do_action('wbcr_factory_000_imppage_flush_cache', $this->plugin->getPluginName());
+				do_action('wbcr_factory_000_imppage_flush_cache', $this->plugin->getPluginName(), $this->getResultId());
 
 				$this->redirectToAction('index', apply_filters('wbcr_factory_000_imppage_flush_redirect_args', array(
 					$this->plugin->getPluginName() . '_saved' => 1
@@ -380,7 +380,7 @@
 						$page_parent_id = $this->getResultId($page['parent']);
 						
 						if( isset($page_menu[$page_parent_id]) ) {
-							//$page['title'] = strip_tags($page['title'], '<b><span>');
+							$page['title'] = strip_tags($page['title']);
 							$page_submenu[$page_parent_id][$page_screen] = $page;
 						}
 					}
