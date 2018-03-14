@@ -243,34 +243,87 @@
 
 				do_action('wbcr_factory_000_imppage_flush_cache', $this->plugin->getPluginName(), $this->getResultId());
 
+				$this->afterFormSave();
+
 				$this->redirectToAction('index', apply_filters('wbcr_factory_000_imppage_flush_redirect_args', array(
 					$this->plugin->getPluginName() . '_saved' => 1
 				)));
 			}
-			
-			public function warningNotice()
+
+
+			/**
+			 * Вызывается всегда при загрузке страницы, перед опциями формы с типом страницы options
+			 */
+			protected function warningNotice()
 			{
 				/*if( WP_CACHE ) {
 					$this->printWarningNotice(__("It seems that a caching/performance plugin is active on this site. Please manually invalidate that plugin's cache after making any changes to the settings below.", 'factory_pages_000'));
 				}*/
+				// Метод предназначен для вызова в дочернем классе
 			}
-			
-			public function printWarningNotice($message)
+
+			/**
+			 * Вызывается всегда при загрузке страницы, перед опциями формы с типом страницы options
+			 *
+			 * @since 4.0.0
+			 * @param array $notices
+			 * @return array
+			 */
+			protected function getActionNotices($notices)
+			{
+				// Метод предназначен для вызова в дочернем классе
+				return $notices;
+			}
+
+			/**
+			 * Вызывается перед сохранением опций формы
+			 *
+			 * @since 4.0.0
+			 * @return void
+			 */
+			protected function beforeFormSave()
+			{
+				// Метод предназначен для вызова в дочернем классе
+			}
+
+			/**
+			 * Вызывается после сохранением опций формы, когда выполнен сброс кеша и совершен редирект
+			 *
+			 * @since 4.0.0
+			 * @return void
+			 */
+			protected function afterFormSave()
+			{
+				// Метод предназначен для вызова в дочернем классе
+			}
+
+			/**
+			 * Вызывается в процессе выполнения сохранения, но после сохранения всех опций
+			 *
+			 * @since 4.0.0
+			 * @return void
+			 */
+			protected function formSaved()
+			{
+				// Метод предназначен для вызова в дочернем классе
+			}
+
+			protected function printWarningNotice($message)
 			{
 				echo '<div class="alert alert-warning wbcr-factory-warning-notice"><p><span class="dashicons dashicons-warning"></span> ' . $message . '</p></div>';
 			}
 
-			public function printErrorNotice($message)
+			protected function printErrorNotice($message)
 			{
 				echo '<div class="alert alert-danger wbcr-factory-warning-notice"><p><span class="dashicons dashicons-dismiss"></span> ' . $message . '</p></div>';
 			}
 
-			public function printSuccessNotice($message)
+			protected function printSuccessNotice($message)
 			{
 				echo '<div class="alert alert-success wbcr-factory-warning-notice"><p><span class="dashicons dashicons-plus"></span> ' . $message . '</p></div>';
 			}
 
-			protected function showActionsNotice()
+			private function showActionsNotice()
 			{
 				$notices = array(
 					array(
@@ -285,6 +338,7 @@
 				);
 				
 				$notices = apply_filters('wbcr_factory_pages_000_imppage_actions_notice', $notices, $this->plugin, $this->id);
+				$notices = $this->getActionNotices($notices);
 				
 				foreach($notices as $key => $notice) {
 					$show_message = true;
@@ -501,9 +555,9 @@
 			{
 				
 				global $factory_impressive_page_menu;
-				
+
 				$form = new Wbcr_FactoryForms000_Form(array(
-					'scope' => $this->plugin->getPluginName(),
+					'scope' => rtrim($this->plugin->getPrefix(), '_'),
 					'name' => $this->getResultId() . "-options"
 				), $this->plugin);
 				
@@ -557,10 +611,13 @@
 					}
 					
 					do_action('wbcr_factory_000_imppage_before_save', $form, $this->plugin->getPluginName());
+
+					$this->beforeFormSave();
 					
 					$form->save();
 					
 					do_action('wbcr_factory_000_imppage_saved', $form, $this->plugin->getPluginName());
+					$this->formSaved();
 					
 					$this->redirectToAction('flush-cache-and-rules', array(
 						'_wpnonce' => wp_create_nonce('wbcr_factory_' . $this->getResultId() . '_flush_action')
