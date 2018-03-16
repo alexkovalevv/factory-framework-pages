@@ -73,14 +73,14 @@
 		}
 	}
 
-	if( !function_exists('factory_pages_000_get_page_id') ) {
+	if( !function_exists('wbcr_factory_pages_000_get_page_id') ) {
 		/**
 		 *
 		 * @param Wbcr_Factory000_Plugin $plugin
 		 * @param string $page_id
 		 * @return string
 		 */
-		function factory_pages_000_get_page_id($plugin, $page_id)
+		function wbcr_factory_pages_000_get_page_id($plugin, $page_id)
 		{
 			return $page_id . '-' . $plugin->getPluginName();
 		}

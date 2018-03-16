@@ -81,7 +81,7 @@
 					? ' ' . $this->page_menu_dashicon
 					: '';
 				
-				$this->title_plugin_action_link = __('Settings', 'factory_pages_000');
+				$this->title_plugin_action_link = __('Settings', 'wbcr_factory_pages_000');
 				
 				//if( $this->type == 'options' ) {
 				//$this->show_right_sidebar_in_options = true;
@@ -257,7 +257,7 @@
 			protected function warningNotice()
 			{
 				/*if( WP_CACHE ) {
-					$this->printWarningNotice(__("It seems that a caching/performance plugin is active on this site. Please manually invalidate that plugin's cache after making any changes to the settings below.", 'factory_pages_000'));
+					$this->printWarningNotice(__("It seems that a caching/performance plugin is active on this site. Please manually invalidate that plugin's cache after making any changes to the settings below.", 'wbcr_factory_pages_000'));
 				}*/
 				// Метод предназначен для вызова в дочернем классе
 			}
@@ -331,8 +331,8 @@
 							$this->plugin->getPluginName() . '_saved' => '1'
 						),
 						'type' => 'success',
-						'message' => __('The settings have been updated successfully!', 'factory_pages_000') . (WP_CACHE
-								? '<br>' . __("It seems that a caching/performance plugin is active on this site. Please manually invalidate that plugin's cache after making any changes to the settings below.", 'factory_pages_000')
+						'message' => __('The settings have been updated successfully!', 'wbcr_factory_pages_000') . (WP_CACHE
+								? '<br>' . __("It seems that a caching/performance plugin is active on this site. Please manually invalidate that plugin's cache after making any changes to the settings below.", 'wbcr_factory_pages_000')
 								: '')
 					)
 				);
@@ -500,7 +500,7 @@
 					<?php endif; ?>
 					<?php if( $this->type == 'options' ): ?>
 						<div class="wbcr-factory-control">
-						<input name="<?= $this->plugin->getPluginName() ?>_save_action" class="wbcr-factory-type-save" type="submit" value="<?php _e('Save settings', 'factory_pages_000'); ?>">
+						<input name="<?= $this->plugin->getPluginName() ?>_save_action" class="wbcr-factory-type-save" type="submit" value="<?php _e('Save settings', 'wbcr_factory_pages_000'); ?>">
 						<?php wp_nonce_field('wbcr_factory_' . $this->getResultId() . '_save_action'); ?>
 						</div><?php endif; ?>
 				</div>
@@ -606,7 +606,7 @@
 					check_admin_referer('wbcr_factory_' . $this->getResultId() . '_save_action');
 
 					if( !current_user_can('administrator') && !current_user_can($this->capabilitiy) ) {
-						wp_die(__('You do not have permission to edit page.', 'factory_pages_000'));
+						wp_die(__('You do not have permission to edit page.', 'wbcr_factory_pages_000'));
 						exit;
 					}
 					
@@ -726,24 +726,24 @@
 						<span class="wbcr-factory-hint-icon-simple wbcr-factory-simple-red">
 							<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAQAAABKmM6bAAAAUUlEQVQIHU3BsQ1AQABA0X/komIrnQHYwyhqQ1hBo9KZRKL9CBfeAwy2ri42JA4mPQ9rJ6OVt0BisFM3Po7qbEliru7m/FkY+TN64ZVxEzh4ndrMN7+Z+jXCAAAAAElFTkSuQmCC" alt=""/>
 						</span>
-							- <?php _e('A neutral setting that can not harm your site, but you must be sure that you need to use it.', 'factory_pages_000'); ?>
+							- <?php _e('A neutral setting that can not harm your site, but you must be sure that you need to use it.', 'wbcr_factory_pages_000'); ?>
 						</li>
 						<li>
 						<span class="wbcr-factory-hint-icon-simple wbcr-factory-simple-grey">
 							<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAQAAABKmM6bAAAAUUlEQVQIHU3BsQ1AQABA0X/komIrnQHYwyhqQ1hBo9KZRKL9CBfeAwy2ri42JA4mPQ9rJ6OVt0BisFM3Po7qbEliru7m/FkY+TN64ZVxEzh4ndrMN7+Z+jXCAAAAAElFTkSuQmCC" alt=""/>
 						</span>
-							- <?php _e('When set this option, you must be careful. Plugins and themes may depend on this function. You must be sure that you can disable this feature for the site.', 'factory_pages_000'); ?>
+							- <?php _e('When set this option, you must be careful. Plugins and themes may depend on this function. You must be sure that you can disable this feature for the site.', 'wbcr_factory_pages_000'); ?>
 						</li>
 						<li>
 						<span class="wbcr-factory-hint-icon-simple wbcr-factory-simple-green">
 							<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAQAAABKmM6bAAAAUUlEQVQIHU3BsQ1AQABA0X/komIrnQHYwyhqQ1hBo9KZRKL9CBfeAwy2ri42JA4mPQ9rJ6OVt0BisFM3Po7qbEliru7m/FkY+TN64ZVxEzh4ndrMN7+Z+jXCAAAAAElFTkSuQmCC" alt=""/>
 						</span>
-							- <?php _e('Absolutely safe setting, We recommend to use.', 'factory_pages_000'); ?>
+							- <?php _e('Absolutely safe setting, We recommend to use.', 'wbcr_factory_pages_000'); ?>
 						</li>
 					</ul>
 					----------<br>
 					
-					<p><?php _e('Hover to the icon to get help for the feature you selected.', 'factory_pages_000'); ?></p>
+					<p><?php _e('Hover to the icon to get help for the feature you selected.', 'wbcr_factory_pages_000'); ?></p>
 				</div>
 			<?php
 			}
@@ -761,17 +761,17 @@
 				?>
 				<div class="wbcr-factory-sidebar-widget">
 					<p>
-						<strong><?php _e('Do you want the plugin to improved and update?', 'factory_pages_000'); ?></strong>
+						<strong><?php _e('Do you want the plugin to improved and update?', 'wbcr_factory_pages_000'); ?></strong>
 					</p>
 					
-					<p><?php _e('Help the author, leave a review on wordpress.org. Thanks to feedback, I will know that the plugin is really useful to you and is needed.', 'factory_pages_000'); ?></p>
+					<p><?php _e('Help the author, leave a review on wordpress.org. Thanks to feedback, I will know that the plugin is really useful to you and is needed.', 'wbcr_factory_pages_000'); ?></p>
 					
-					<p><?php _e('And also write your ideas on how to extend or improve the plugin.', 'factory_pages_000'); ?></p>
+					<p><?php _e('And also write your ideas on how to extend or improve the plugin.', 'wbcr_factory_pages_000'); ?></p>
 					
 					<p>
 						<i class="wbcr-factory-icon-5stars"></i>
 						<a href="<?= $page_url ?>" title="Go rate us" target="_blank">
-							<strong><?php _e('Go rate us and push ideas', 'factory_pages_000'); ?></strong>
+							<strong><?php _e('Go rate us and push ideas', 'wbcr_factory_pages_000'); ?></strong>
 						</a>
 					</p>
 				</div>
@@ -783,7 +783,7 @@
 				?>
 				<div class="wbcr-factory-sidebar-widget">
 					<p>
-						<strong><?php _e('Donation for plugin development', 'factory_pages_000'); ?></strong>
+						<strong><?php _e('Donation for plugin development', 'wbcr_factory_pages_000'); ?></strong>
 					</p>
 					
 					<?php if( get_locale() !== 'ru_RU' ): ?>
