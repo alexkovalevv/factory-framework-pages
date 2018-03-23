@@ -241,11 +241,19 @@
 					$GLOBALS['wp_fastest_cache']->deleteCache();
 				}
 
-				do_action('wbcr_factory_000_imppage_flush_cache', $this->plugin->getPluginName(), $this->getResultId());
+				wbcr_factory_000_do_action_deprecated('wbcr_factory_000_imppage_flush_cache', array(
+					$this->plugin->getPluginName(),
+					$this->getResultId()
+				), '4.0.1', 'wbcr_factory_000_imppage_after_form_save');
+
+				/**
+				 * @since 4.0.1
+				 */
+				do_action('wbcr_factory_000_imppage_after_form_save', $this->plugin, $this);
 
 				$this->afterFormSave();
 
-				$this->redirectToAction('index', apply_filters('wbcr_factory_000_imppage_flush_redirect_args', array(
+				$this->redirectToAction('index', apply_filters('wbcr_factory_000_imppage_after_form_save_redirect_args', array(
 					$this->plugin->getPluginName() . '_saved' => 1
 				)));
 			}
@@ -308,19 +316,30 @@
 				// Метод предназначен для вызова в дочернем классе
 			}
 
-			protected function printWarningNotice($message)
+			public function printWarningNotice($message)
 			{
 				echo '<div class="alert alert-warning wbcr-factory-warning-notice"><p><span class="dashicons dashicons-warning"></span> ' . $message . '</p></div>';
 			}
 
-			protected function printErrorNotice($message)
+			public function printErrorNotice($message)
 			{
 				echo '<div class="alert alert-danger wbcr-factory-warning-notice"><p><span class="dashicons dashicons-dismiss"></span> ' . $message . '</p></div>';
 			}
 
-			protected function printSuccessNotice($message)
+			public function printSuccessNotice($message)
 			{
 				echo '<div class="alert alert-success wbcr-factory-warning-notice"><p><span class="dashicons dashicons-plus"></span> ' . $message . '</p></div>';
+			}
+
+			protected function printAllNotices()
+			{
+				$this->warningNotice();
+				$this->showActionsNotice();
+
+				/**
+				 * @since 4.0.1
+				 */
+				do_action('wbcr_factory_pages_000_imppage_print_all_notices', $this->plugin, $this);
 			}
 
 			private function showActionsNotice()
@@ -509,11 +528,7 @@
 			
 			protected function showRightSidebar()
 			{
-				$widgets = apply_filters('wbcr_factory_pages_000_imppage_right_sidebar_widgets', array(
-					'info_widget' => $this->getInfoWidget(),
-					'rating_widget' => $this->getRatingWidget(),
-					'donate_widget' => $this->getDonateWidget()
-				), $this->getResultId());
+				$widgets = $this->getPageWidgets('right');
 				
 				if( empty($widgets) ) {
 					return;
@@ -526,12 +541,7 @@
 			
 			protected function showBottomSidebar()
 			{
-				
-				$widgets = apply_filters('wbcr_factory_pages_000_imppage_bottom_sidebar_widgets', array(
-					'info_widget' => $this->getInfoWidget(),
-					'rating_widget' => $this->getRatingWidget(),
-					'donate_widget' => $this->getDonateWidget()
-				), $this->getResultId());
+				$widgets = $this->getPageWidgets('bottom');
 				
 				if( empty($widgets) ) {
 					return;
@@ -546,6 +556,33 @@
 					<?php endforeach; ?>
 				</div>
 			<?php
+			}
+
+			protected function getPageWidgets($position = 'bottom')
+			{
+				wbcr_factory_000_apply_filters_deprecated('wbcr_factory_pages_000_imppage_right_sidebar_widgets', array(
+					array(
+						'info_widget' => $this->getInfoWidget(),
+						'rating_widget' => $this->getRatingWidget(),
+						'donate_widget' => $this->getDonateWidget()
+					),
+					$this->getResultId()
+				), '4.0.1', 'wbcr_factory_pages_000_imppage_get_widgets');
+
+				wbcr_factory_000_apply_filters_deprecated('wbcr_factory_pages_000_imppage_bottom_sidebar_widgets', array(
+					array(
+						'info_widget' => $this->getInfoWidget(),
+						'rating_widget' => $this->getRatingWidget(),
+						'donate_widget' => $this->getDonateWidget()
+					),
+					$this->getResultId()
+				), '4.0.1', 'wbcr_factory_pages_000_imppage_get_widgets');
+
+				return apply_filters('wbcr_factory_pages_000_imppage_get_widgets', array(
+					'info_widget' => $this->getInfoWidget(),
+					'rating_widget' => $this->getRatingWidget(),
+					'donate_widget' => $this->getDonateWidget()
+				), $position, $this->plugin, $this);
 			}
 			
 			/**
@@ -567,10 +604,10 @@
 				
 				if( isset($options[0]) && isset($options[0]['items']) && is_array($options[0]['items']) ) {
 					
-					array_unshift($options[0]['items'], array(
+					/*array_unshift($options[0]['items'], array(
 						'type' => 'html',
-						'html' => array($this, 'warningNotice')
-					));
+						'html' => array($this, 'printAllNotices')
+					));*/
 					
 					foreach($options[0]['items'] as $key => $value) {
 						
@@ -609,14 +646,25 @@
 						wp_die(__('You do not have permission to edit page.', 'wbcr_factory_pages_000'));
 						exit;
 					}
-					
-					do_action('wbcr_factory_000_imppage_before_save', $form, $this->plugin->getPluginName());
+
+					wbcr_factory_000_do_action_deprecated('wbcr_factory_000_imppage_before_save', array(
+						$form,
+						$this->plugin->getPluginName()
+					), '4.0.1', 'wbcr_factory_000_imppage_before_form_save');
+
+					do_action('wbcr_factory_000_imppage_before_form_save', $form, $this->plugin, $this);
 
 					$this->beforeFormSave();
 					
 					$form->save();
+
+					wbcr_factory_000_do_action_deprecated('wbcr_factory_000_imppage_saved', array(
+						$form,
+						$this->plugin->getPluginName()
+					), '4.0.1', 'wbcr_factory_000_imppage_form_saved');
 					
-					do_action('wbcr_factory_000_imppage_saved', $form, $this->plugin->getPluginName());
+					do_action('wbcr_factory_000_imppage_form_saved', $form, $this->plugin, $this);
+
 					$this->formSaved();
 					
 					$this->redirectToAction('flush-cache-and-rules', array(
@@ -645,7 +693,7 @@
 									<div class="wbcr-factory-content" style="min-height:<?= $min_height ?>px">
 										<form method="post" class="form-horizontal">
 											<?php $this->showHeader(); ?>
-											<?php $this->showActionsNotice(); ?>
+											<?php $this->printAllNotices(); ?>
 											<?php $form->html(); ?>
 										</form>
 									</div>
@@ -695,7 +743,7 @@
 								<div class="wbcr-factory-content-section<?php if( !$this->show_right_sidebar_in_options ): echo ' wbcr-fullwidth'; endif ?>">
 									<?php $this->showPageSubMenu() ?>
 									<div class="wbcr-factory-content" style="min-height:<?= $min_height ?>px">
-										<?php $this->showActionsNotice(); ?>
+										<?php $this->printAllNotices(); ?>
 										<?php $this->showPageContent() ?>
 									</div>
 								</div>

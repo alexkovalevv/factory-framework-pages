@@ -316,10 +316,10 @@
 			 * @param string $action
 			 * @param array $query_args
 			 */
-			protected function redirectToAction($action, $query_args = array())
+			public function redirectToAction($action, $query_args = array())
 			{
 				
-				wp_redirect($this->getActionUrl($action, $query_args));
+				wp_safe_redirect($this->getActionUrl($action, $query_args));
 				exit;
 			}
 			
