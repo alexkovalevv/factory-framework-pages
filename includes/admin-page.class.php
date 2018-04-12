@@ -51,7 +51,7 @@
 			 * @link http://codex.wordpress.org/Function_Reference/add_menu_page
 			 * @var string
 			 */
-			public $menuPosition = null;
+			public $menu_position = null;
 			
 			/**
 			 * Menu type. Set it to add the page to the specified type menu.
@@ -278,7 +278,7 @@
 					add_menu_page($this->page_title, $this->menu_title, $this->capabilitiy, $result_id, array(
 						$this,
 						'show'
-					), null, $this->menuPosition);
+					), null, $this->menu_position);
 					
 					if( !empty($this->menu_sub_title) ) {
 						
