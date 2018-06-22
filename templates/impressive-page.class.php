@@ -30,6 +30,11 @@
 			 * @var bool
 			 */
 			public $internal = true;
+
+			/**
+			 * @var bool
+			 */
+			public $network = false;
 			
 			/**
 			 * @var string
@@ -65,6 +70,11 @@
 			 * @var bool
 			 */
 			public $show_bottom_sidebar = true;
+
+            /**
+             * @var array
+             */
+			public $page_menu = array();
 			
 			/**
 			 * @param Wbcr_Factory000_Plugin $plugin
@@ -75,26 +85,14 @@
 				
 				parent::__construct($plugin);
 				
-				global $factory_impressive_page_menu;
-				
-				$dashicon = (!empty($this->page_menu_dashicon))
-					? ' ' . $this->page_menu_dashicon
-					: '';
-				
 				$this->title_plugin_action_link = __('Settings', 'wbcr_factory_pages_000');
 				
 				//if( $this->type == 'options' ) {
 				//$this->show_right_sidebar_in_options = true;
 				//$this->show_bottom_sidebar = false;
 				//}
-				
-				$factory_impressive_page_menu[$plugin->getPluginName()][$this->getResultId()] = array(
-					'type' => $this->type, // page, options
-					'url' => $this->getBaseUrl(),
-					'title' => '<span class="dashicons' . $dashicon . '"></span> ' . $this->getMenuTitle(),
-					'position' => $this->page_menu_position,
-					'parent' => $this->page_parent_page
-				);
+
+                $this->setPageMenu();
 			}
 			
 			public function __call($name, $arguments)
@@ -113,6 +111,37 @@
 				}
 				
 				return null;
+			}
+
+			/**
+			 * Set page menu item
+			 */
+            public function setPageMenu()
+            {
+	            $dashicon = ( ! empty( $this->page_menu_dashicon ) )
+		            ? ' ' . $this->page_menu_dashicon
+		            : '';
+
+	            $type = $this->network ? 'net' : 'set';
+
+	            $this->page_menu[ $this->plugin->getPluginName() ][ $type ][ $this->getResultId() ] = array(
+		            'type'     => $this->type, // page, options
+		            'url'      => $this->getBaseUrl(),
+		            'title'    => '<span class="dashicons' . $dashicon . '"></span> ' . $this->getMenuTitle(),
+		            'position' => $this->page_menu_position,
+		            'parent'   => $this->page_parent_page
+	            );
+			}
+
+			/**
+             * Get page menu items
+             *
+			 * @return mixed
+			 */
+			public function getPageMenu() {
+				$type = $this->network ? 'net' : 'set';
+
+				return $this->page_menu[ $this->plugin->getPluginName() ][ $type ];
 			}
 			
 			/**
@@ -197,9 +226,11 @@
 				$result_id = $this->getResultId();
 				
 				if( $this->menu_target ) {
-					return add_query_arg(array('page' => $result_id), admin_url($this->menu_target));
+				    $url = $this->network ? network_admin_url($this->menu_target) : admin_url($this->menu_target);
+					return add_query_arg(array('page' => $result_id), $url);
 				} else {
-					return add_query_arg(array('page' => $result_id), admin_url('admin.php'));
+					$url = $this->network ? network_admin_url('admin.php') : admin_url('admin.php');
+					return add_query_arg(array('page' => $result_id), $url);
 				}
 			}
 			
@@ -211,9 +242,7 @@
 			 */
 			public function indexAction()
 			{
-				global $factory_impressive_page_menu;
-				
-				if( 'options' === $factory_impressive_page_menu[$this->plugin->getPluginName()][$this->getResultId()]['type'] ) {
+				if( 'options' === $this->getPageMenu()[$this->getResultId()]['type'] ) {
 					$this->showOptions();
 				} else {
 					$this->showPage();
@@ -393,9 +422,7 @@
 			
 			protected function showPageMenu()
 			{
-				global $factory_impressive_page_menu;
-				
-				$page_menu = $factory_impressive_page_menu[$this->plugin->getPluginName()];
+				$page_menu = $this->getPageMenu();
 				$self_page_id = $this->getResultId();
 				$current_page = isset($page_menu[$self_page_id])
 					? $page_menu[$self_page_id]
@@ -440,9 +467,8 @@
 			
 			protected function showPageSubMenu()
 			{
-				global $factory_impressive_page_menu;
 				$self_page_id = $this->getResultId();
-				$page_menu = $factory_impressive_page_menu[$this->plugin->getPluginName()];
+				$page_menu = $this->getPageMenu();
 				$current_page = isset($page_menu[$self_page_id])
 					? $page_menu[$self_page_id]
 					: null;
@@ -522,6 +548,9 @@
 						<input name="<?= $this->plugin->getPluginName() ?>_save_action" class="wbcr-factory-type-save" type="submit" value="<?php _e('Save settings', 'wbcr_factory_pages_000'); ?>">
 						<?php wp_nonce_field('wbcr_factory_' . $this->getResultId() . '_save_action'); ?>
 						</div><?php endif; ?>
+                    <?php if ( $this->network ): ?>
+                        <input type="hidden" name="all_sites" value="1">
+                    <?php endif; ?>
 				</div>
 			<?php
 			}
@@ -590,13 +619,11 @@
 			 */
 			protected function showOptions()
 			{
-				
-				global $factory_impressive_page_menu;
-
-				$form = new Wbcr_FactoryForms000_Form(array(
-					'scope' => rtrim($this->plugin->getPrefix(), '_'),
-					'name' => $this->getResultId() . "-options"
-				), $this->plugin);
+				$form = new Wbcr_FactoryForms000_Form( array(
+					'scope'     => rtrim( $this->plugin->getPrefix(), '_' ),
+					'name'      => $this->getResultId() . "-options",
+					'all_sites' => isset( $_POST['all_sites'] ) ? $_POST['all_sites'] : false,
+				), $this->plugin );
 				
 				$form->setProvider(new Wbcr_FactoryForms000_OptionsValueProvider($this->plugin));
 				
@@ -681,7 +708,7 @@
 							</div>
 							<?php
 								$min_height = 0;
-								foreach($factory_impressive_page_menu[$this->plugin->getPluginName()] as $page) {
+								foreach($this->getPageMenu() as $page) {
 									if( !isset($page['parent']) || empty($page['parent']) ) {
 										$min_height += 61;
 									}
@@ -720,9 +747,7 @@
 			}
 			
 			protected function showPage()
-			{
-				global $factory_impressive_page_menu;
-				?>
+			{ ?>
 				<div id="WBCR" class="wrap">
 					<div class="wbcr-factory-pages-000-impressive-page-template factory-bootstrap-000 factory-fontawesome-000">
 						<div class="wbcr-factory-page wbcr-factory-page-<?= $this->id ?>">
@@ -733,7 +758,7 @@
 							</div>
 							<?php
 								$min_height = 0;
-								foreach($factory_impressive_page_menu[$this->plugin->getPluginName()] as $page) {
+								foreach($this->getPageMenu() as $page) {
 									if( !isset($page['parent']) || empty($page['parent']) ) {
 										$min_height += 61;
 									}
@@ -763,8 +788,7 @@
 			{
 				// используется в классе потомке
 			}
-			
-			
+
 			public function showInfoWidget()
 			{
 				?>
