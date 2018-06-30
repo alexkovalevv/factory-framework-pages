@@ -32,36 +32,57 @@
 			public $internal = true;
 			
 			/**
+			 * Тип страницы
+			 * options - предназначена для создании страниц с набором опций и настроек.
+			 * page - произвольный контент, любой html код
+			 *
 			 * @var string
 			 */
 			public $type = 'options';
 			
 			/**
+			 * ID родительской страницы, если указан, тогда эта страница будет внутренней странтцей
+			 *
 			 * @var string
 			 */
 			public $page_parent_page;
-			
+
 			/**
+			 * Иконка страницы
+			 * Полный список иконок смотреть тут:
+			 * https://developer.wordpress.org/resource/dashicons/#admin-network
+			 *
 			 * @var string
 			 */
 			public $page_menu_dashicon;
-			
+
 			/**
+			 * Позиция закладки в меню плагина.
+			 * 0 - в самом конце, 100 - в самом начале
+			 *
 			 * @var int
 			 */
 			public $page_menu_position = 10;
-			
+
 			/**
+			 * Заголовок страницы, также использует в меню, как название закладки
+			 *
 			 * @var bool
 			 */
 			public $show_page_title = true;
-			
+
 			/**
+			 * Показывать правый сайдбар?
+			 * Сайдбар будет показан на внутренних страницах шаблона.
+			 *
 			 * @var bool
 			 */
 			public $show_right_sidebar_in_options = false;
-			
+
 			/**
+			 * Показывать нижний сайдбар?
+			 * Сайдбар будет показан на внутренних страницах шаблона.
+			 *
 			 * @var bool
 			 */
 			public $show_bottom_sidebar = true;
