@@ -93,7 +93,8 @@
 			public function __construct(Wbcr_Factory000_Plugin $plugin)
 			{
 				$this->menuIcon = FACTORY_PAGES_000_URL . '/templates/assets/img/webcraftic-plugin-icon.png';
-				
+				$this->plugin = $plugin;
+
 				parent::__construct($plugin);
 				
 				global $factory_impressive_page_menu;
@@ -109,13 +110,14 @@
 				//$this->show_bottom_sidebar = false;
 				//}
 				
-				$factory_impressive_page_menu[$plugin->getPluginName()][$this->getResultId()] = array(
+				$factory_impressive_page_menu[$this->getMenuScope()][$this->getResultId()] = array(
 					'type' => $this->type, // page, options
 					'url' => $this->getBaseUrl(),
 					'title' => '<span class="dashicons' . $dashicon . '"></span> ' . $this->getMenuTitle(),
 					'position' => $this->page_menu_position,
 					'parent' => $this->page_parent_page
 				);
+
 			}
 			
 			public function __call($name, $arguments)
@@ -165,6 +167,13 @@
 				
 				$this->styles->add(FACTORY_PAGES_000_URL . '/templates/assets/css/impressive.page.template.css');
 				//$this->styles->add('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+			}
+
+			/**
+			 * @return string
+			 */
+			public function getMenuScope() {
+				return $this->plugin->getPluginName();
 			}
 			
 			/**
