@@ -118,19 +118,22 @@
 			 */
             public function setPageMenu()
             {
+                global $factory_impressive_page_menu;
+
 	            $dashicon = ( ! empty( $this->page_menu_dashicon ) )
 		            ? ' ' . $this->page_menu_dashicon
 		            : '';
 
 	            $type = $this->network ? 'net' : 'set';
 
-	            $this->page_menu[ $this->plugin->getPluginName() ][ $type ][ $this->getResultId() ] = array(
+	            $factory_impressive_page_menu[ $this->plugin->getPluginName() ][ $type ][ $this->getResultId() ] = array(
 		            'type'     => $this->type, // page, options
 		            'url'      => $this->getBaseUrl(),
 		            'title'    => '<span class="dashicons' . $dashicon . '"></span> ' . $this->getMenuTitle(),
 		            'position' => $this->page_menu_position,
 		            'parent'   => $this->page_parent_page
 	            );
+
 			}
 
 			/**
@@ -139,9 +142,11 @@
 			 * @return mixed
 			 */
 			public function getPageMenu() {
+			    global $factory_impressive_page_menu;
+
 				$type = $this->network ? 'net' : 'set';
 
-				return $this->page_menu[ $this->plugin->getPluginName() ][ $type ];
+				return $factory_impressive_page_menu[ $this->plugin->getPluginName() ][ $type ];
 			}
 			
 			/**
@@ -427,11 +432,11 @@
 				$current_page = isset($page_menu[$self_page_id])
 					? $page_menu[$self_page_id]
 					: null;
-				
+
 				$parent_page_id = !empty($current_page['parent'])
 					? $this->getResultId($current_page['parent'])
 					: null;
-				
+
 				uasort($page_menu, array($this, 'pageMenuSort'));
 				?>
 				<ul>
