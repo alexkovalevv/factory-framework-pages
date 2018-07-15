@@ -117,7 +117,6 @@
 					'position' => $this->page_menu_position,
 					'parent' => $this->page_parent_page
 				);
-
 			}
 			
 			public function __call($name, $arguments)
@@ -172,7 +171,8 @@
 			/**
 			 * @return string
 			 */
-			public function getMenuScope() {
+			public function getMenuScope()
+			{
 				return $this->plugin->getPluginName();
 			}
 			
@@ -243,7 +243,7 @@
 			{
 				global $factory_impressive_page_menu;
 				
-				if( 'options' === $factory_impressive_page_menu[$this->plugin->getPluginName()][$this->getResultId()]['type'] ) {
+				if( 'options' === $factory_impressive_page_menu[$this->getMenuScope()][$this->getResultId()]['type'] ) {
 					$this->showOptions();
 				} else {
 					$this->showPage();
@@ -425,7 +425,7 @@
 			{
 				global $factory_impressive_page_menu;
 				
-				$page_menu = $factory_impressive_page_menu[$this->plugin->getPluginName()];
+				$page_menu = $factory_impressive_page_menu[$this->getMenuScope()];
 				$self_page_id = $this->getResultId();
 				$current_page = isset($page_menu[$self_page_id])
 					? $page_menu[$self_page_id]
@@ -472,7 +472,7 @@
 			{
 				global $factory_impressive_page_menu;
 				$self_page_id = $this->getResultId();
-				$page_menu = $factory_impressive_page_menu[$this->plugin->getPluginName()];
+				$page_menu = $factory_impressive_page_menu[$this->getMenuScope()];
 				$current_page = isset($page_menu[$self_page_id])
 					? $page_menu[$self_page_id]
 					: null;
@@ -711,7 +711,7 @@
 							</div>
 							<?php
 								$min_height = 0;
-								foreach($factory_impressive_page_menu[$this->plugin->getPluginName()] as $page) {
+								foreach($factory_impressive_page_menu[$this->getMenuScope()] as $page) {
 									if( !isset($page['parent']) || empty($page['parent']) ) {
 										$min_height += 61;
 									}
@@ -763,7 +763,7 @@
 							</div>
 							<?php
 								$min_height = 0;
-								foreach($factory_impressive_page_menu[$this->plugin->getPluginName()] as $page) {
+								foreach($factory_impressive_page_menu[$this->getMenuScope()] as $page) {
 									if( !isset($page['parent']) || empty($page['parent']) ) {
 										$min_height += 61;
 									}
