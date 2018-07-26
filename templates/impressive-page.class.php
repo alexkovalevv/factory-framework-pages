@@ -35,6 +35,11 @@
 			 * @var bool
 			 */
 			public $network = false;
+
+			/**
+			 * @var bool
+			 */
+			public $available_for_multisite = false;
 			
 			/**
 			 * @var string
@@ -82,7 +87,17 @@
 			public function __construct(Wbcr_Factory000_Plugin $plugin)
 			{
 				$this->menuIcon = FACTORY_PAGES_000_URL . '/templates/assets/img/webcraftic-plugin-icon.png';
-				
+
+				if (
+					is_multisite()
+					&& is_network_admin()
+					&& apply_filters('wbcr_factory_000_core_admin_allow_multisite', false)
+					&& $this->available_for_multisite
+				) {
+					$this->network = true;
+					$this->menu_target = 'settings.php';
+				}
+
 				parent::__construct($plugin);
 				
 				$this->title_plugin_action_link = __('Settings', 'wbcr_factory_pages_000');
@@ -247,7 +262,8 @@
 			 */
 			public function indexAction()
 			{
-				if( 'options' === $this->getPageMenu()[$this->getResultId()]['type'] ) {
+			    $page_menu = $this->getPageMenu();
+				if( 'options' === $page_menu[$this->getResultId()]['type'] ) {
 					$this->showOptions();
 				} else {
 					$this->showPage();

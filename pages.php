@@ -14,11 +14,8 @@
 		exit;
 	}
 
-	const WBCR_PAGE_TYPE_SETTINGS = 1;
-	const WBCR_PAGE_TYPE_NETWORK = 2;
-
 	add_action('admin_menu', 'Wbcr_FactoryPages000::actionAdminMenu');
-	add_action('network_admin_menu', 'Wbcr_FactoryPages000::actionNetworkAdminMenu');
+	add_action('network_admin_menu', 'Wbcr_FactoryPages000::actionAdminMenu');
 
 	if( !class_exists('Wbcr_FactoryPages000') ) {
 		/**
@@ -32,11 +29,6 @@
 			 * @var Wbcr_FactoryPages000_Page[]
 			 */
 			private static $pages = array();
-
-			/**
-			 * @var Wbcr_FactoryPages000_Page[]
-			 */
-			private static $network_pages = array();
 			
 			/**
 			 * @param Wbcr_Factory000_Plugin $plugin
@@ -57,31 +49,6 @@
 				}
 
 				foreach(self::$pages as $plugin_pages) {
-					foreach($plugin_pages as $page) {
-						$page->connect();
-					}
-				}
-			}
-
-			/**
-			 * @param Wbcr_Factory000_Plugin $plugin
-			 * @param $class_name
-			 */
-			public static function registerNetwork($plugin, $class_name)
-			{
-				if( !isset(self::$network_pages[$plugin->getPluginName()]) ) {
-					self::$network_pages[$plugin->getPluginName()] = array();
-				}
-				self::$network_pages[$plugin->getPluginName()][] = new $class_name($plugin);
-			}
-
-			public static function actionNetworkAdminMenu()
-			{
-				if( empty(self::$network_pages) ) {
-					return;
-				}
-
-				foreach(self::$network_pages as $plugin_pages) {
 					foreach($plugin_pages as $page) {
 						$page->connect();
 					}
