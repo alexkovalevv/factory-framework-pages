@@ -40,6 +40,11 @@
 			 * @var bool
 			 */
 			public $available_for_multisite = false;
+
+			/**
+			 * @var bool
+			 */
+			public $only_for_network = false;
 			
 			/**
 			 * @var string
@@ -90,12 +95,29 @@
 
 				if (
 					is_multisite()
-					&& is_network_admin()
 					&& apply_filters('wbcr_factory_000_core_admin_allow_multisite', false)
 					&& $this->available_for_multisite
 				) {
-					$this->network = true;
-					$this->menu_target = 'settings.php';
+				    if ( $this->only_for_network ) {
+					    // Makes sure the plugin is defined before trying to use it
+					    if ( ! function_exists( 'is_plugin_active_for_network' ) ) {
+						    require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
+					    }
+					    $plugin_path_info = $plugin->getPluginPathInfo();
+
+					    if ( is_plugin_active_for_network( $plugin_path_info->relative_path ) ) {
+						    if ( is_network_admin() ) {
+							    $this->network     = true;
+							    $this->menu_target = 'settings.php';
+						    } else {
+							    $this->capabilitiy = 'manage_network';
+							    $this->menu_target = '/';
+						    }
+					    }
+				    } else if ( is_network_admin() ) {
+					    $this->network     = true;
+					    $this->menu_target = 'settings.php';
+				    }
 				}
 
 				parent::__construct($plugin);
