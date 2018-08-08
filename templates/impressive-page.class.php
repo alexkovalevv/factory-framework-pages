@@ -44,7 +44,7 @@
 			/**
 			 * @var bool
 			 */
-			public $only_for_network = false;
+			public $only_for_network = true;
 			
 			/**
 			 * @var string
