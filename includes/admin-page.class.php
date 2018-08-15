@@ -158,6 +158,14 @@
 				$this->scripts->connect();
 				$this->styles->connect();
 			}
+
+			/**
+			 * @return string
+			 */
+			public function getMenuScope()
+			{
+				return $this->plugin->getPluginName();
+			}
 			
 			/**
 			 * @param null $id
@@ -170,7 +178,7 @@
 					: $this->id;
 				
 				if( $this->plugin ) {
-					return $id . '-' . $this->plugin->getPluginName();
+					return $id . '-' . $this->getMenuScope();
 				}
 				
 				return $id;

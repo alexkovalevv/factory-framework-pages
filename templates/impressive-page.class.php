@@ -171,14 +171,6 @@
 			/**
 			 * @return string
 			 */
-			public function getMenuScope()
-			{
-				return $this->plugin->getPluginName();
-			}
-			
-			/**
-			 * @return string
-			 */
 			public function getMenuTitle()
 			{
 				return $this->menu_title;
