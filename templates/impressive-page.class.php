@@ -580,31 +580,31 @@
 			<?php
 			}
 
+			/**
+			 * @param string $position
+			 * @return mixed|void
+			 */
 			protected function getPageWidgets($position = 'bottom')
 			{
-				wbcr_factory_000_apply_filters_deprecated('wbcr_factory_pages_000_imppage_right_sidebar_widgets', array(
-					array(
-						'info_widget' => $this->getInfoWidget(),
-						'rating_widget' => $this->getRatingWidget(),
-						'donate_widget' => $this->getDonateWidget()
-					),
-					$this->getResultId()
-				), '4.0.1', 'wbcr_factory_pages_000_imppage_get_widgets');
-
-				wbcr_factory_000_apply_filters_deprecated('wbcr_factory_pages_000_imppage_bottom_sidebar_widgets', array(
-					array(
-						'info_widget' => $this->getInfoWidget(),
-						'rating_widget' => $this->getRatingWidget(),
-						'donate_widget' => $this->getDonateWidget()
-					),
-					$this->getResultId()
-				), '4.0.1', 'wbcr_factory_pages_000_imppage_get_widgets');
-
-				return apply_filters('wbcr_factory_pages_000_imppage_get_widgets', array(
+				$widgets = array(
 					'info_widget' => $this->getInfoWidget(),
 					'rating_widget' => $this->getRatingWidget(),
 					'donate_widget' => $this->getDonateWidget()
-				), $position, $this->plugin, $this);
+				);
+
+				$widgets = wbcr_factory_000_apply_filters_deprecated('wbcr_factory_pages_000_imppage_right_sidebar_widgets', array(
+					$widgets,
+					$this->getResultId()
+				), '4.0.1', 'wbcr_factory_pages_000_imppage_get_widgets');
+
+				$widgets = wbcr_factory_000_apply_filters_deprecated('wbcr_factory_pages_000_imppage_bottom_sidebar_widgets', array(
+					$widgets,
+					$this->getResultId()
+				), '4.0.1', 'wbcr_factory_pages_000_imppage_get_widgets');
+
+				$widgets = apply_filters('wbcr_factory_pages_000_imppage_get_widgets', $widgets, $position, $this->plugin, $this);
+
+				return $widgets;
 			}
 			
 			/**
@@ -769,6 +769,12 @@
 										<?php $this->showPageContent() ?>
 									</div>
 								</div>
+
+								<?php if( $this->show_right_sidebar_in_options ): ?>
+									<div class="wbcr-factory-right-sidebar-section">
+										<?php $this->showRightSidebar(); ?>
+									</div>
+								<?php endif; ?>
 							</div>
 						</div>
 						<div class="clearfix"></div>
