@@ -135,6 +135,8 @@
 							    $this->menu_target = '/';
 						    }
 					    }
+
+					    $this->add_link_to_plugin_actions = false;
 				    } else if ( is_network_admin() ) {
 					    $this->network     = true;
 					    $this->menu_target = 'settings.php';
@@ -613,7 +615,7 @@
 						<?php wp_nonce_field('wbcr_factory_' . $this->getResultId() . '_save_action'); ?>
 						</div><?php endif; ?>
                     <?php if ( $this->network ): ?>
-                        <input type="hidden" name="all_sites" value="1">
+                        <input type="hidden" name="all_sites" id="wbcr_all_sites" value="1">
                     <?php endif; ?>
 				</div>
 			<?php
