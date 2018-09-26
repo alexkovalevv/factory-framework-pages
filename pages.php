@@ -15,6 +15,7 @@
 	}
 
 	add_action('admin_menu', 'Wbcr_FactoryPages000::actionAdminMenu');
+	add_action('network_admin_menu', 'Wbcr_FactoryPages000::actionAdminMenu');
 
 	if( !class_exists('Wbcr_FactoryPages000') ) {
 		/**

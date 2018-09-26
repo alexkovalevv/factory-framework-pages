@@ -86,6 +86,12 @@
 			 * @var bool
 			 */
 			public $internal = false;
+
+			/**
+			 * If true, the page is for network
+			 * @var bool
+			 */
+			public $network = false;
 			
 			/**
 			 * If true, the page will not be cretaed.
@@ -272,17 +278,15 @@
 				
 				$this->page_title = apply_filters('wbcr_factory_page_title_' . $result_id, $this->page_title);
 				$this->menu_title = apply_filters('wbcr_factory_menu_title_' . $result_id, $this->menu_title);
-				
+
 				// submenu
 				if( $this->menu_target ) {
-					
 					add_submenu_page($this->menu_target, $this->page_title, $this->menu_title, $this->capabilitiy, $result_id, array(
 						$this,
 						'show'
 					));
 					// global menu
 				} else {
-					
 					add_menu_page($this->page_title, $this->menu_title, $this->capabilitiy, $result_id, array(
 						$this,
 						'show'
@@ -348,7 +352,7 @@
 			public function getActionUrl($action = null, $query_args = array())
 			{
 				$baseUrl = $this->getBaseUrl();
-				
+
 				if( !empty($action) ) {
 					$query_args['action'] = $action;
 				}
@@ -363,7 +367,7 @@
 			protected function getBaseUrl()
 			{
 				$result_id = $this->getResultId();
-				
+
 				if( $this->menu_target ) {
 					if( $this->custom_target ) {
 						return admin_url('admin.php') . '?page=' . $result_id;

@@ -35,7 +35,6 @@
 			 */
 			public $result;
 
-
 			/**
 			 * @param Wbcr_Factory000_Plugin $plugin
 			 * @throws Exception

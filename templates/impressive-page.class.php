@@ -30,6 +30,21 @@
 			 * @var bool
 			 */
 			public $internal = true;
+
+			/**
+			 * @var bool
+			 */
+			public $network = false;
+
+			/**
+			 * @var bool
+			 */
+			public $available_for_multisite = false;
+
+			/**
+			 * @var bool
+			 */
+			public $only_for_network = true;
 			
 			/**
 			 * Тип страницы
@@ -86,6 +101,11 @@
 			 * @var bool
 			 */
 			public $show_bottom_sidebar = true;
+
+            /**
+             * @var array
+             */
+			public $page_menu = array();
 			
 			/**
 			 * @param Wbcr_Factory000_Plugin $plugin
@@ -93,15 +113,35 @@
 			public function __construct(Wbcr_Factory000_Plugin $plugin)
 			{
 				$this->menuIcon = FACTORY_PAGES_000_URL . '/templates/assets/img/webcraftic-plugin-icon.png';
-				$this->plugin = $plugin;
+
+				if (
+					is_multisite()
+					&& apply_filters('wbcr_factory_000_core_admin_allow_multisite', false)
+					&& $this->available_for_multisite
+				) {
+				    if ( $this->only_for_network ) {
+					    // Makes sure the plugin is defined before trying to use it
+					    if ( ! function_exists( 'is_plugin_active_for_network' ) ) {
+						    require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
+					    }
+					    $plugin_path_info = $plugin->getPluginPathInfo();
+
+					    if ( is_plugin_active_for_network( $plugin_path_info->relative_path ) ) {
+						    if ( is_network_admin() ) {
+							    $this->network     = true;
+							    $this->menu_target = 'settings.php';
+						    } else {
+							    $this->capabilitiy = 'manage_network';
+							    $this->menu_target = '/';
+						    }
+					    }
+				    } else if ( is_network_admin() ) {
+					    $this->network     = true;
+					    $this->menu_target = 'settings.php';
+				    }
+				}
 
 				parent::__construct($plugin);
-				
-				global $factory_impressive_page_menu;
-				
-				$dashicon = (!empty($this->page_menu_dashicon))
-					? ' ' . $this->page_menu_dashicon
-					: '';
 				
 				$this->title_plugin_action_link = __('Settings', 'wbcr_factory_pages_000');
 				
@@ -109,14 +149,8 @@
 				//$this->show_right_sidebar_in_options = true;
 				//$this->show_bottom_sidebar = false;
 				//}
-				
-				$factory_impressive_page_menu[$this->getMenuScope()][$this->getResultId()] = array(
-					'type' => $this->type, // page, options
-					'url' => $this->getBaseUrl(),
-					'title' => '<span class="dashicons' . $dashicon . '"></span> ' . $this->getMenuTitle(),
-					'position' => $this->page_menu_position,
-					'parent' => $this->page_parent_page
-				);
+
+                $this->setPageMenu();
 			}
 			
 			public function __call($name, $arguments)
@@ -135,6 +169,42 @@
 				}
 				
 				return null;
+			}
+
+			/**
+			 * Set page menu item
+			 */
+            public function setPageMenu()
+            {
+                global $factory_impressive_page_menu;
+
+	            $dashicon = ( ! empty( $this->page_menu_dashicon ) )
+		            ? ' ' . $this->page_menu_dashicon
+		            : '';
+
+	            $type = $this->network ? 'net' : 'set';
+
+	            $factory_impressive_page_menu[ $this->plugin->getPluginName() ][ $type ][ $this->getResultId() ] = array(
+		            'type'     => $this->type, // page, options
+		            'url'      => $this->getBaseUrl(),
+		            'title'    => '<span class="dashicons' . $dashicon . '"></span> ' . $this->getMenuTitle(),
+		            'position' => $this->page_menu_position,
+		            'parent'   => $this->page_parent_page
+	            );
+
+			}
+
+			/**
+             * Get page menu items
+             *
+			 * @return mixed
+			 */
+			public function getPageMenu() {
+			    global $factory_impressive_page_menu;
+
+				$type = $this->network ? 'net' : 'set';
+
+				return $factory_impressive_page_menu[ $this->plugin->getPluginName() ][ $type ];
 			}
 			
 			/**
@@ -219,9 +289,11 @@
 				$result_id = $this->getResultId();
 				
 				if( $this->menu_target ) {
-					return add_query_arg(array('page' => $result_id), admin_url($this->menu_target));
+				    $url = $this->network ? network_admin_url($this->menu_target) : admin_url($this->menu_target);
+					return add_query_arg(array('page' => $result_id), $url);
 				} else {
-					return add_query_arg(array('page' => $result_id), admin_url('admin.php'));
+					$url = $this->network ? network_admin_url('admin.php') : admin_url('admin.php');
+					return add_query_arg(array('page' => $result_id), $url);
 				}
 			}
 			
@@ -233,9 +305,8 @@
 			 */
 			public function indexAction()
 			{
-				global $factory_impressive_page_menu;
-				
-				if( 'options' === $factory_impressive_page_menu[$this->getMenuScope()][$this->getResultId()]['type'] ) {
+			    $page_menu = $this->getPageMenu();
+				if( 'options' === $page_menu[$this->getResultId()]['type'] ) {
 					$this->showOptions();
 				} else {
 					$this->showPage();
@@ -415,18 +486,16 @@
 			
 			protected function showPageMenu()
 			{
-				global $factory_impressive_page_menu;
-				
-				$page_menu = $factory_impressive_page_menu[$this->getMenuScope()];
+				$page_menu = $this->getPageMenu();
 				$self_page_id = $this->getResultId();
 				$current_page = isset($page_menu[$self_page_id])
 					? $page_menu[$self_page_id]
 					: null;
-				
+
 				$parent_page_id = !empty($current_page['parent'])
 					? $this->getResultId($current_page['parent'])
 					: null;
-				
+
 				uasort($page_menu, array($this, 'pageMenuSort'));
 				?>
 				<ul>
@@ -462,9 +531,8 @@
 			
 			protected function showPageSubMenu()
 			{
-				global $factory_impressive_page_menu;
 				$self_page_id = $this->getResultId();
-				$page_menu = $factory_impressive_page_menu[$this->getMenuScope()];
+				$page_menu = $this->getPageMenu();
 				$current_page = isset($page_menu[$self_page_id])
 					? $page_menu[$self_page_id]
 					: null;
@@ -544,6 +612,9 @@
 						<input name="<?= $this->plugin->getPluginName() ?>_save_action" class="wbcr-factory-type-save" type="submit" value="<?php _e('Save settings', 'wbcr_factory_pages_000'); ?>">
 						<?php wp_nonce_field('wbcr_factory_' . $this->getResultId() . '_save_action'); ?>
 						</div><?php endif; ?>
+                    <?php if ( $this->network ): ?>
+                        <input type="hidden" name="all_sites" value="1">
+                    <?php endif; ?>
 				</div>
 			<?php
 			}
@@ -612,13 +683,11 @@
 			 */
 			protected function showOptions()
 			{
-				
-				global $factory_impressive_page_menu;
-
-				$form = new Wbcr_FactoryForms000_Form(array(
-					'scope' => rtrim($this->plugin->getPrefix(), '_'),
-					'name' => $this->getResultId() . "-options"
-				), $this->plugin);
+				$form = new Wbcr_FactoryForms000_Form( array(
+					'scope'     => rtrim( $this->plugin->getPrefix(), '_' ),
+					'name'      => $this->getResultId() . "-options",
+					'all_sites' => isset( $_POST['all_sites'] ) ? $_POST['all_sites'] : false,
+				), $this->plugin );
 				
 				$form->setProvider(new Wbcr_FactoryForms000_OptionsValueProvider($this->plugin));
 				
@@ -703,7 +772,7 @@
 							</div>
 							<?php
 								$min_height = 0;
-								foreach($factory_impressive_page_menu[$this->getMenuScope()] as $page) {
+								foreach($this->getPageMenu() as $page) {
 									if( !isset($page['parent']) || empty($page['parent']) ) {
 										$min_height += 61;
 									}
@@ -742,9 +811,7 @@
 			}
 			
 			protected function showPage()
-			{
-				global $factory_impressive_page_menu;
-				?>
+			{ ?>
 				<div id="WBCR" class="wrap">
 					<div class="wbcr-factory-pages-000-impressive-page-template factory-bootstrap-000 factory-fontawesome-000">
 						<div class="wbcr-factory-page wbcr-factory-page-<?= $this->id ?>">
@@ -755,7 +822,7 @@
 							</div>
 							<?php
 								$min_height = 0;
-								foreach($factory_impressive_page_menu[$this->getMenuScope()] as $page) {
+								foreach($this->getPageMenu() as $page) {
 									if( !isset($page['parent']) || empty($page['parent']) ) {
 										$min_height += 61;
 									}
@@ -791,8 +858,7 @@
 			{
 				// используется в классе потомке
 			}
-			
-			
+
 			public function showInfoWidget()
 			{
 				?>
