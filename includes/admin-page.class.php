@@ -120,9 +120,7 @@
 				parent::__construct($plugin);
 				$this->configure();
 				
-				$this->id = empty($this->id)
-					? str_replace('adminpage', '', strtolower(get_class($this)))
-					: $this->id;
+				$this->id = empty($this->id) ? str_replace('adminpage', '', strtolower(get_class($this))) : $this->id;
 				
 				if( $this->add_link_to_plugin_actions ) {
 					$plugin_path_info = $this->plugin->getPluginPathInfo();
@@ -179,9 +177,7 @@
 			 */
 			public function getResultId($id = null)
 			{
-				$id = !empty($id)
-					? $id
-					: $this->id;
+				$id = !empty($id) ? $id : $this->id;
 				
 				if( $this->plugin ) {
 					return $id . '-' . $this->getMenuScope();
@@ -268,13 +264,9 @@
 					$this->capabilitiy = 'manage_options';
 				}
 				
-				$this->page_title = !$this->page_title
-					? $this->menu_title
-					: $this->page_title;
+				$this->page_title = !$this->page_title ? $this->menu_title : $this->page_title;
 				
-				$this->menu_title = !$this->menu_title
-					? $this->page_title
-					: $this->menu_title;
+				$this->menu_title = !$this->menu_title ? $this->page_title : $this->menu_title;
 				
 				$this->page_title = apply_filters('wbcr_factory_page_title_' . $result_id, $this->page_title);
 				$this->menu_title = apply_filters('wbcr_factory_menu_title_' . $result_id, $this->menu_title);
@@ -364,9 +356,9 @@
 			/**
 			 * @return string
 			 */
-			protected function getBaseUrl()
+			protected function getBaseUrl($id = null)
 			{
-				$result_id = $this->getResultId();
+				$result_id = $this->getResultId($id);
 
 				if( $this->menu_target ) {
 					if( $this->custom_target ) {
@@ -450,9 +442,7 @@
 			 */
 			function addLinkToPluginActions($links)
 			{
-				$link_title = !empty($this->title_plugin_action_link)
-					? $this->title_plugin_action_link
-					: $this->menu_title;
+				$link_title = !empty($this->title_plugin_action_link) ? $this->title_plugin_action_link : $this->menu_title;
 				
 				$settings_link = '<a href="' . $this->getBaseUrl() . '">' . $link_title . '</a>';
 				array_unshift($links, $settings_link);

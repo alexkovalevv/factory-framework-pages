@@ -217,45 +217,59 @@
         position: relative;
         float: right;
         margin: 12px;
+      }
 
-        input[type="submit"] {
-          display: inline-block;
-          vertical-align: top;
-          font-size: 13px;
-          font-weight: 600;
-          line-height: 20px;
-          text-transform: uppercase;
-          margin: 10px 0 0;
-          padding: 8px 30px;
-          cursor: pointer;
-          position: relative;
-          overflow: hidden;
-          border: none;
-          border-radius: 50px;
-          box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.08) inset;
-          background-color: #f1f1f1;
-          color: inherit;
-          transition: background-color 0.3s, border-color 0.3s, color 0.3s, opacity 0.3s;
-          text-align: center;
-          outline: none;
-          z-index: 3;
+      .wbcr-factory-button {
+        display: inline-block;
+        vertical-align: top;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 20px;
+        text-transform: uppercase;
+        margin: 10px 0 0;
+        padding: 8px 30px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        border: none;
+        border-radius: 50px;
+        box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.08) inset;
+        background-color: #f1f1f1;
+        color: inherit;
+        transition: background-color 0.3s, border-color 0.3s, color 0.3s, opacity 0.3s;
+        text-align: center;
+        outline: none;
+        text-decoration: none;
+        z-index: 3;
 
-          &.wbcr-factory-type-save {
-            box-shadow: none;
-            min-width: 200px;
-            background-color: #8bc34a;
+        &.wbcr-factory-type-save {
+          box-shadow: none;
+          min-width: 100px;
+          background-color: #8bc34a;
+          color: #fff;
+          &:hover {
+            background: #9dbb7b;
             color: #fff;
-            &:hover {
-              background: #9dbb7b;
-              color: #fff;
-            }
-            &:active {
-              box-shadow: inset -1px 1px 1px rgba(0, 0, 0, 0.3);
-            }
+          }
+          &:active {
+            box-shadow: inset -1px 1px 1px rgba(0, 0, 0, 0.3);
+          }
+        }
+
+        &.wbcr-factory-type-settings {
+          box-shadow: none;
+          min-width: 200px;
+          background-color: #9e9e9e;
+          color: #fff;
+          &:hover {
+            background: #797979;
+            color: #fff;
+          }
+          &:active {
+            box-shadow: inset -1px 1px 1px rgba(0, 0, 0, 0.3);
           }
         }
       }
-
     }
 
     .wbcr-factory-left-navigation-bar {
@@ -274,16 +288,45 @@
           background: #efefef;
           //padding: 15px 20px;
           margin: 1px 0;
-          a {
+          .wbcr-factory-tab__link {
             display: block;
             width: 100%;
             padding: 20px 20px;
             font-size: 12px;
-            color: #9a9a9a;
+            color: #585858;
             text-decoration: none;
             text-transform: uppercase;
+            text-align: left;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+
+            .wbcr-factory-tab__title {
+              display: block;
+              font-weight: bold;
+            }
+
+            .wbcr-factory-tab__short-description {
+              display: block;
+              font-size: 13px;
+              font-weight: normal;
+              text-transform: none;
+              color: #9a9a9a;
+            }
+
+            .dashicons {
+              float: right;
+              //font-size: 22px;
+              color: #ccc;
+            }
+
+            &::after {
+              clear: both;
+            }
+
             &:hover {
               background: #f7f6f6;
+              .dashicons {
+                color: #9a9a9a;
+              }
             }
             &, &:active, &:hover, &:active, &:focus {
               outline: 0 !important;
@@ -294,7 +337,12 @@
           &.wbcr-factory-active-tab {
             background: #fff;
             a {
-              color: #222;
+              color: #ff5722;
+              font-weight: bold;
+              border-left: 5px solid #ff5722;
+              .dashicons {
+                color: #9a9a9a;
+              }
             }
           }
         }

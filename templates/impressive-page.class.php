@@ -72,6 +72,12 @@
 			public $page_menu_dashicon;
 
 			/**
+			 *
+			 * @var
+			 */
+			public $page_menu_short_description;
+
+			/**
 			 * Позиция закладки в меню плагина.
 			 * 0 - в самом конце, 100 - в самом начале
 			 *
@@ -102,9 +108,9 @@
 			 */
 			public $show_bottom_sidebar = true;
 
-            /**
-             * @var array
-             */
+			/**
+			 * @var array
+			 */
 			public $page_menu = array();
 			
 			/**
@@ -113,34 +119,31 @@
 			public function __construct(Wbcr_Factory000_Plugin $plugin)
 			{
 				$this->menuIcon = FACTORY_PAGES_000_URL . '/templates/assets/img/webcraftic-plugin-icon.png';
+				$allow_multisite = apply_filters('wbcr_factory_000_core_admin_allow_multisite', false);
 
-				if (
-					is_multisite()
-					&& apply_filters('wbcr_factory_000_core_admin_allow_multisite', false)
-					&& $this->available_for_multisite
-				) {
-				    if ( $this->only_for_network ) {
-					    // Makes sure the plugin is defined before trying to use it
-					    if ( ! function_exists( 'is_plugin_active_for_network' ) ) {
-						    require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
-					    }
-					    $plugin_path_info = $plugin->getPluginPathInfo();
+				if( is_multisite() && $allow_multisite && $this->available_for_multisite ) {
+					if( $this->only_for_network ) {
+						// Makes sure the plugin is defined before trying to use it
+						if( !function_exists('is_plugin_active_for_network') ) {
+							require_once(ABSPATH . '/wp-admin/includes/plugin.php');
+						}
+						$plugin_path_info = $plugin->getPluginPathInfo();
 
-					    if ( is_plugin_active_for_network( $plugin_path_info->relative_path ) ) {
-						    if ( is_network_admin() ) {
-							    $this->network     = true;
-							    $this->menu_target = 'settings.php';
-						    } else {
-							    $this->capabilitiy = 'manage_network';
-							    $this->menu_target = '/';
-						    }
-					    }
+						if( is_plugin_active_for_network($plugin_path_info->relative_path) ) {
+							if( is_network_admin() ) {
+								$this->network = true;
+								$this->menu_target = 'settings.php';
+							} else {
+								$this->capabilitiy = 'manage_network';
+								$this->menu_target = '/';
+							}
+						}
 
-					    $this->add_link_to_plugin_actions = false;
-				    } else if ( is_network_admin() ) {
-					    $this->network     = true;
-					    $this->menu_target = 'settings.php';
-				    }
+						$this->add_link_to_plugin_actions = false;
+					} else if( is_network_admin() ) {
+						$this->network = true;
+						$this->menu_target = 'settings.php';
+					}
 				}
 
 				parent::__construct($plugin);
@@ -152,7 +155,7 @@
 				//$this->show_bottom_sidebar = false;
 				//}
 
-                $this->setPageMenu();
+				$this->setPageMenu();
 			}
 			
 			public function __call($name, $arguments)
@@ -176,37 +179,37 @@
 			/**
 			 * Set page menu item
 			 */
-            public function setPageMenu()
-            {
-                global $factory_impressive_page_menu;
+			public function setPageMenu()
+			{
+				global $factory_impressive_page_menu;
 
-	            $dashicon = ( ! empty( $this->page_menu_dashicon ) )
-		            ? ' ' . $this->page_menu_dashicon
-		            : '';
-
-	            $type = $this->network ? 'net' : 'set';
-
-	            $factory_impressive_page_menu[ $this->plugin->getPluginName() ][ $type ][ $this->getResultId() ] = array(
-		            'type'     => $this->type, // page, options
-		            'url'      => $this->getBaseUrl(),
-		            'title'    => '<span class="dashicons' . $dashicon . '"></span> ' . $this->getMenuTitle(),
-		            'position' => $this->page_menu_position,
-		            'parent'   => $this->page_parent_page
-	            );
-
-			}
-
-			/**
-             * Get page menu items
-             *
-			 * @return mixed
-			 */
-			public function getPageMenu() {
-			    global $factory_impressive_page_menu;
+				$dashicon = (!empty($this->page_menu_dashicon)) ? ' ' . $this->page_menu_dashicon : '';
+				$short_description = (!empty($this->page_menu_short_description)) ? ' ' . $this->page_menu_short_description : '';
 
 				$type = $this->network ? 'net' : 'set';
 
-				return $factory_impressive_page_menu[ $this->plugin->getPluginName() ][ $type ];
+				$factory_impressive_page_menu[$this->plugin->getPluginName()][$type][$this->getResultId()] = array(
+					'type' => $this->type, // page, options
+					'url' => $this->getBaseUrl(),
+					'title' => $this->getMenuTitle() . ' <span class="dashicons' . $dashicon . '"></span>',
+					'short_description' => $short_description,
+					'position' => $this->page_menu_position,
+					'parent' => $this->page_parent_page
+				);
+			}
+
+			/**
+			 * Get page menu items
+			 *
+			 * @return mixed
+			 */
+			public function getPageMenu()
+			{
+				global $factory_impressive_page_menu;
+
+				$type = $this->network ? 'net' : 'set';
+
+				return $factory_impressive_page_menu[$this->plugin->getPluginName()][$type];
 			}
 			
 			/**
@@ -286,15 +289,17 @@
 			/**
 			 * @return string
 			 */
-			protected function getBaseUrl()
+			protected function getBaseUrl($id = null)
 			{
-				$result_id = $this->getResultId();
+				$result_id = $this->getResultId($id);
 				
 				if( $this->menu_target ) {
-				    $url = $this->network ? network_admin_url($this->menu_target) : admin_url($this->menu_target);
+					$url = $this->network ? network_admin_url($this->menu_target) : admin_url($this->menu_target);
+
 					return add_query_arg(array('page' => $result_id), $url);
 				} else {
 					$url = $this->network ? network_admin_url('admin.php') : admin_url('admin.php');
+
 					return add_query_arg(array('page' => $result_id), $url);
 				}
 			}
@@ -307,7 +312,7 @@
 			 */
 			public function indexAction()
 			{
-			    $page_menu = $this->getPageMenu();
+				$page_menu = $this->getPageMenu();
 				if( 'options' === $page_menu[$this->getResultId()]['type'] ) {
 					$this->showOptions();
 				} else {
@@ -325,15 +330,8 @@
 			{
 				check_admin_referer('wbcr_factory_' . $this->getResultId() . '_flush_action');
 
-				// todo: test cache control
-				if( function_exists('w3tc_pgcache_flush') ) {
-					w3tc_pgcache_flush();
-				} elseif( function_exists('wp_cache_clear_cache') ) {
-					wp_cache_clear_cache();
-				} elseif( function_exists('rocket_clean_files') ) {
-					rocket_clean_files(esc_url($_SERVER['HTTP_REFERER']));
-				} else if( isset($GLOBALS['wp_fastest_cache']) && method_exists($GLOBALS['wp_fastest_cache'], 'deleteCache') ) {
-					$GLOBALS['wp_fastest_cache']->deleteCache();
+				if( class_exists('WbcrFactoryClearfy000_Helpers') ) {
+					WbcrFactoryClearfy000_Helpers::flushPageCache();
 				}
 
 				wbcr_factory_000_do_action_deprecated('wbcr_factory_000_imppage_flush_cache', array(
@@ -445,9 +443,7 @@
 							$this->plugin->getPluginName() . '_saved' => '1'
 						),
 						'type' => 'success',
-						'message' => __('The settings have been updated successfully!', 'wbcr_factory_pages_000') . (WP_CACHE
-								? '<br>' . __("It seems that a caching/performance plugin is active on this site. Please manually invalidate that plugin's cache after making any changes to the settings below.", 'wbcr_factory_pages_000')
-								: '')
+						'message' => __('The settings have been updated successfully!', 'wbcr_factory_pages_000') . (WP_CACHE ? '<br>' . __("It seems that a caching/performance plugin is active on this site. Please manually invalidate that plugin's cache after making any changes to the settings below.", 'wbcr_factory_pages_000') : '')
 					)
 				);
 				
@@ -468,9 +464,7 @@
 						continue;
 					}
 					
-					$notice_type = isset($notice['type'])
-						? $notice['type']
-						: 'success';
+					$notice_type = isset($notice['type']) ? $notice['type'] : 'success';
 
 					switch( $notice_type ) {
 						case 'success':
@@ -490,13 +484,9 @@
 			{
 				$page_menu = $this->getPageMenu();
 				$self_page_id = $this->getResultId();
-				$current_page = isset($page_menu[$self_page_id])
-					? $page_menu[$self_page_id]
-					: null;
+				$current_page = isset($page_menu[$self_page_id]) ? $page_menu[$self_page_id] : null;
 
-				$parent_page_id = !empty($current_page['parent'])
-					? $this->getResultId($current_page['parent'])
-					: null;
+				$parent_page_id = !empty($current_page['parent']) ? $this->getResultId($current_page['parent']) : null;
 
 				uasort($page_menu, array($this, 'pageMenuSort'));
 				?>
@@ -512,8 +502,15 @@
 						}
 						?>
 						<li class="wbcr-factory-nav-tab<?= $active_tab ?>">
-							<a href="<?php echo $page['url'] ?>" id="<?= $page_screen ?>-tab">
-								<?php echo $page['title'] ?>
+							<a href="<?php echo $page['url'] ?>" id="<?= $page_screen ?>-tab" class="wbcr-factory-tab__link">
+								<div class="wbcr-factory-tab__title">
+									<?php echo $page['title'] ?>
+								</div>
+								<?php if( !empty($page['short_description']) ): ?>
+									<div class="wbcr-factory-tab__short-description">
+										<?php echo $page['short_description'] ?>
+									</div>
+								<?php endif; ?>
 							</a>
 						</li>
 					<?php endforeach; ?>
@@ -535,9 +532,7 @@
 			{
 				$self_page_id = $this->getResultId();
 				$page_menu = $this->getPageMenu();
-				$current_page = isset($page_menu[$self_page_id])
-					? $page_menu[$self_page_id]
-					: null;
+				$current_page = isset($page_menu[$self_page_id]) ? $page_menu[$self_page_id] : null;
 				
 				$page_submenu = array();
 				foreach($page_menu as $page_screen => $page) {
@@ -557,9 +552,7 @@
 				
 				$get_menu_id = null;
 				$has_parent = !empty($current_page) && !empty($current_page['parent']);
-				$parent_page_id = $has_parent
-					? $this->getResultId($current_page['parent'])
-					: null;
+				$parent_page_id = $has_parent ? $this->getResultId($current_page['parent']) : null;
 				
 				if( ($has_parent && isset($page_submenu[$parent_page_id])) ) {
 					$get_menu_id = $parent_page_id;
@@ -609,14 +602,20 @@
 							<h2><?php _e('Page') ?>: <?= $this->getPageTitle() ?></h2>
 						</div>
 					<?php endif; ?>
-					<?php if( $this->type == 'options' ): ?>
-						<div class="wbcr-factory-control">
-						<input name="<?= $this->plugin->getPluginName() ?>_save_action" class="wbcr-factory-type-save" type="submit" value="<?php _e('Save settings', 'wbcr_factory_pages_000'); ?>">
-						<?php wp_nonce_field('wbcr_factory_' . $this->getResultId() . '_save_action'); ?>
-						</div><?php endif; ?>
-                    <?php if ( $this->network ): ?>
-                        <input type="hidden" name="all_sites" id="wbcr_all_sites" value="1">
-                    <?php endif; ?>
+
+					<div class="wbcr-factory-control">
+						<a href="<?= $this->getBaseUrl('clearfy_settings') ?>" class="wbcr-factory-button wbcr-factory-type-settings">
+							<?php _e('Clearfy settings', 'wbcr_factory_pages_000'); ?>
+						</a>
+						<?php if( $this->type == 'options' ): ?>
+							<input name="<?= $this->plugin->getPluginName() ?>_save_action" class="wbcr-factory-button wbcr-factory-type-save" type="submit" value="<?php _e('Save', 'wbcr_factory_pages_000'); ?>">
+
+							<?php wp_nonce_field('wbcr_factory_' . $this->getResultId() . '_save_action'); ?>
+						<?php endif; ?>
+					</div>
+					<?php if( $this->network ): ?>
+						<input type="hidden" name="all_sites" id="wbcr_all_sites" value="1">
+					<?php endif; ?>
 				</div>
 			<?php
 			}
@@ -665,16 +664,6 @@
 					'donate_widget' => $this->getDonateWidget()
 				);
 
-				$widgets = wbcr_factory_000_apply_filters_deprecated('wbcr_factory_pages_000_imppage_right_sidebar_widgets', array(
-					$widgets,
-					$this->getResultId()
-				), '4.0.1', 'wbcr_factory_pages_000_imppage_get_widgets');
-
-				$widgets = wbcr_factory_000_apply_filters_deprecated('wbcr_factory_pages_000_imppage_bottom_sidebar_widgets', array(
-					$widgets,
-					$this->getResultId()
-				), '4.0.1', 'wbcr_factory_pages_000_imppage_get_widgets');
-
 				$widgets = apply_filters('wbcr_factory_pages_000_imppage_get_widgets', $widgets, $position, $this->plugin, $this);
 
 				return $widgets;
@@ -685,11 +674,11 @@
 			 */
 			protected function showOptions()
 			{
-				$form = new Wbcr_FactoryForms000_Form( array(
-					'scope'     => rtrim( $this->plugin->getPrefix(), '_' ),
-					'name'      => $this->getResultId() . "-options",
-					'all_sites' => isset( $_POST['all_sites'] ) ? $_POST['all_sites'] : false,
-				), $this->plugin );
+				$form = new Wbcr_FactoryForms000_Form(array(
+					'scope' => rtrim($this->plugin->getPrefix(), '_'),
+					'name' => $this->getResultId() . "-options",
+					'all_sites' => isset($_POST['all_sites']) ? $_POST['all_sites'] : false,
+				), $this->plugin);
 				
 				$form->setProvider(new Wbcr_FactoryForms000_OptionsValueProvider($this->plugin));
 				
@@ -721,7 +710,8 @@
 							'integer',
 							'textbox',
 							'dropdown',
-							'list'
+							'list',
+							'wp-editor'
 						)) ) {
 							$options[0]['items'][$key]['layout']['column-left'] = '6';
 							$options[0]['items'][$key]['layout']['column-right'] = '6';
@@ -740,22 +730,12 @@
 						exit;
 					}
 
-					wbcr_factory_000_do_action_deprecated('wbcr_factory_000_imppage_before_save', array(
-						$form,
-						$this->plugin->getPluginName()
-					), '4.0.1', 'wbcr_factory_000_imppage_before_form_save');
-
 					do_action('wbcr_factory_000_imppage_before_form_save', $form, $this->plugin, $this);
 
 					$this->beforeFormSave();
 					
 					$form->save();
 
-					wbcr_factory_000_do_action_deprecated('wbcr_factory_000_imppage_saved', array(
-						$form,
-						$this->plugin->getPluginName()
-					), '4.0.1', 'wbcr_factory_000_imppage_form_saved');
-					
 					do_action('wbcr_factory_000_imppage_form_saved', $form, $this->plugin, $this);
 
 					$this->formSaved();
@@ -776,7 +756,7 @@
 								$min_height = 0;
 								foreach($this->getPageMenu() as $page) {
 									if( !isset($page['parent']) || empty($page['parent']) ) {
-										$min_height += 61;
+										$min_height += 77;
 									}
 								}
 							?>
@@ -826,7 +806,7 @@
 								$min_height = 0;
 								foreach($this->getPageMenu() as $page) {
 									if( !isset($page['parent']) || empty($page['parent']) ) {
-										$min_height += 61;
+										$min_height += 77;
 									}
 								}
 							?>
