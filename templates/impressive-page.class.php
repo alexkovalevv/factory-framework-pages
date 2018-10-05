@@ -44,7 +44,7 @@
 			/**
 			 * @var bool
 			 */
-			public $only_for_network = true;
+			//public $only_for_network = false;
 			
 			/**
 			 * Тип страницы
@@ -119,31 +119,12 @@
 			public function __construct(Wbcr_Factory000_Plugin $plugin)
 			{
 				$this->menuIcon = FACTORY_PAGES_000_URL . '/templates/assets/img/webcraftic-plugin-icon.png';
-				$allow_multisite = apply_filters('wbcr_factory_000_core_admin_allow_multisite', false);
+				//$allow_multisite = apply_filters('wbcr_factory_000_core_admin_allow_multisite', false);
 
-				if( is_multisite() && $allow_multisite && $this->available_for_multisite ) {
-					if( $this->only_for_network ) {
-						// Makes sure the plugin is defined before trying to use it
-						if( !function_exists('is_plugin_active_for_network') ) {
-							require_once(ABSPATH . '/wp-admin/includes/plugin.php');
-						}
-						$plugin_path_info = $plugin->getPluginPathInfo();
-
-						if( is_plugin_active_for_network($plugin_path_info->relative_path) ) {
-							if( is_network_admin() ) {
-								$this->network = true;
-								$this->menu_target = 'settings.php';
-							} else {
-								$this->capabilitiy = 'manage_network';
-								$this->menu_target = '/';
-							}
-						}
-
-						$this->add_link_to_plugin_actions = false;
-					} else if( is_network_admin() ) {
-						$this->network = true;
-						$this->menu_target = 'settings.php';
-					}
+				if( is_multisite() && $this->available_for_multisite && $plugin->isNetworkActive() ) {
+					$this->network = true;
+					$this->menu_target = 'settings.php';
+					$this->capabilitiy = 'manage_network';
 				}
 
 				parent::__construct($plugin);
@@ -613,9 +594,6 @@
 							<?php wp_nonce_field('wbcr_factory_' . $this->getResultId() . '_save_action'); ?>
 						<?php endif; ?>
 					</div>
-					<?php if( $this->network ): ?>
-						<input type="hidden" name="all_sites" id="wbcr_all_sites" value="1">
-					<?php endif; ?>
 				</div>
 			<?php
 			}
@@ -676,8 +654,7 @@
 			{
 				$form = new Wbcr_FactoryForms000_Form(array(
 					'scope' => rtrim($this->plugin->getPrefix(), '_'),
-					'name' => $this->getResultId() . "-options",
-					'all_sites' => isset($_POST['all_sites']) ? $_POST['all_sites'] : false,
+					'name' => $this->getResultId() . "-options"
 				), $this->plugin);
 				
 				$form->setProvider(new Wbcr_FactoryForms000_OptionsValueProvider($this->plugin));

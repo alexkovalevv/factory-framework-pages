@@ -124,11 +124,20 @@
 				
 				if( $this->add_link_to_plugin_actions ) {
 					$plugin_path_info = $this->plugin->getPluginPathInfo();
-					// plugin settings link
-					add_filter("plugin_action_links_" . $plugin_path_info->relative_path, array(
-						$this,
-						'addLinkToPluginActions'
-					));
+
+					if( $plugin->isNetworkActive() ) {
+						// plugin settings link
+						add_filter("network_admin_plugin_action_links_" . $plugin_path_info->relative_path, array(
+							$this,
+							'addLinkToPluginActions'
+						));
+					} else {
+						// plugin settings link
+						add_filter("plugin_action_links_" . $plugin_path_info->relative_path, array(
+							$this,
+							'addLinkToPluginActions'
+						));
+					}
 				}
 			}
 			
