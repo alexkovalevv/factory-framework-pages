@@ -17,10 +17,6 @@
 	if( !class_exists('Wbcr_FactoryPages000_ImpressiveThemplate') ) {
 		/**
 		 * Class Wbcr_FactoryPages000_ImpressiveThemplate
-		 *
-		 * @method string getInfoWidget() - get widget content information
-		 * @method string getRatingWidget(array $args = array()) - get widget content rating
-		 * @method string getDonateWidget() - get widget content donate
 		 */
 		abstract class Wbcr_FactoryPages000_ImpressiveThemplate extends Wbcr_FactoryPages000_AdminPage {
 			
@@ -138,24 +134,6 @@
 
 				$this->setPageMenu();
 			}
-			
-			public function __call($name, $arguments)
-			{
-				if( substr($name, 0, 3) == 'get' ) {
-					$called_method_name = 'show' . substr($name, 3);
-					if( method_exists($this, $called_method_name) ) {
-						ob_start();
-						
-						$this->$called_method_name($arguments);
-						$content = ob_get_contents();
-						ob_end_clean();
-						
-						return $content;
-					}
-				}
-				
-				return null;
-			}
 
 			/**
 			 * Set page menu item
@@ -245,7 +223,7 @@
 			 */
 			public function getPluginTitle()
 			{
-				return $this->plugin->getPluginTitle();
+				return apply_filters('wbcr/factory/imppage/plugin_title', $this->plugin->getPluginTitle(), $this->plugin->getPluginName());
 			}
 
 			/**
@@ -315,21 +293,44 @@
 					WbcrFactoryClearfy000_Helpers::flushPageCache();
 				}
 
+				/**
+				 * @since 4.0.1 - является устаревшим
+				 */
 				wbcr_factory_000_do_action_deprecated('wbcr_factory_000_imppage_flush_cache', array(
 					$this->plugin->getPluginName(),
 					$this->getResultId()
 				), '4.0.1', 'wbcr_factory_000_imppage_after_form_save');
 
 				/**
-				 * @since 4.0.1
+				 * @since 4.0.9 - является устаревшим
 				 */
-				do_action('wbcr_factory_000_imppage_after_form_save', $this->plugin, $this);
+				wbcr_factory_000_do_action_deprecated('wbcr_factory_000_imppage_after_form_save', array(
+					$this->plugin, $this
+				), '4.0.9', 'wbcr/factory/pages/impressive/after_form_save');
+
+				/**
+				 * @since 4.0.1 - добавлен
+				 * @since 4.0.9 - изменено название экшена, без привязки к версии фреймворка
+				 */
+				do_action('wbcr/factory/pages/impressive/after_form_save', $this->plugin, $this);
 
 				$this->afterFormSave();
 
-				$this->redirectToAction('index', apply_filters('wbcr_factory_000_imppage_after_form_save_redirect_args', array(
+				$redirect_args = array(
 					$this->plugin->getPluginName() . '_saved' => 1
-				)));
+				);
+				/**
+				 * @since 4.0.9 - является устаревшим
+				 */
+				$redirect_args = wbcr_factory_000_apply_filters_deprecated('wbcr_factory_000_imppage_after_form_save_redirect_args', $redirect_args, '4.0.9', 'wbcr/factory/pages/impressive/save_redirect_args');
+
+				/**
+				 * @since 4.0.1 - добавлен
+				 * @since 4.0.9 - изменено название экшена, без привязки к версии фреймворка
+				 */
+				$redirect_args = apply_filters('wbcr/factory/pages/impressive/save_redirect_args', $redirect_args);
+
+				$this->redirectToAction('index', $redirect_args);
 			}
 
 
@@ -405,15 +406,27 @@
 				echo '<div class="alert alert-success wbcr-factory-warning-notice"><p><span class="dashicons dashicons-plus"></span> ' . $message . '</p></div>';
 			}
 
+			/**
+			 * Печатает все зарегистрированные системные уведомления внутри интерфейса плагина
+			 * Типы уведомлений: предупреждения, ошибки, успешные выполнения задач
+			 */
 			protected function printAllNotices()
 			{
 				$this->warningNotice();
 				$this->showActionsNotice();
 
 				/**
-				 * @since 4.0.1
+				 * @since 4.0.9 - является устаревшим
 				 */
-				do_action('wbcr_factory_pages_000_imppage_print_all_notices', $this->plugin, $this);
+				wbcr_factory_000_do_action_deprecated('wbcr_factory_pages_000_imppage_print_all_notices', array(
+					$this->plugin, $this
+				), '4.0.9', 'wbcr/factory/pages/impressive/print_all_notices');
+
+				/**
+				 * @since 4.0.1 - добавлен
+				 * @since 4.0.9 - изменено имя
+				 */
+				do_action('wbcr/factory/pages/impressive/print_all_notices', $this->plugin, $this);
 			}
 
 			private function showActionsNotice()
@@ -427,8 +440,22 @@
 						'message' => __('The settings have been updated successfully!', 'wbcr_factory_pages_000') . (WP_CACHE ? '<br>' . __("It seems that a caching/performance plugin is active on this site. Please manually invalidate that plugin's cache after making any changes to the settings below.", 'wbcr_factory_pages_000') : '')
 					)
 				);
-				
-				$notices = apply_filters('wbcr_factory_pages_000_imppage_actions_notice', $notices, $this->plugin, $this->id);
+
+				/**
+				 * @since 4.0.9 - является устаревшим
+				 */
+				$notices = wbcr_factory_000_apply_filters_deprecated('wbcr_factory_pages_000_imppage_actions_notice', array(
+					$notices,
+					$this->plugin,
+					$this->id
+				), '4.0.9', 'wbcr/factory/pages/impressive/actions_notice');
+
+				/**
+				 * @since 4.0.1 - добавлен
+				 * @since 4.0.9 - изменено имя
+				 */
+				$notices = apply_filters('wbcr/factory/pages/impressive/actions_notice', $notices, $this->plugin, $this->id);
+
 				$notices = $this->getActionNotices($notices);
 				
 				foreach($notices as $key => $notice) {
@@ -636,20 +663,24 @@
 			 */
 			protected function getPageWidgets($position = 'bottom')
 			{
-				$widgets = array(
-					'info_widget' => $this->getInfoWidget(),
-					'rating_widget' => $this->getRatingWidget(),
-					'donate_widget' => $this->getDonateWidget()
-				);
+				$widgets = array();
 
-				$widgets = apply_filters('wbcr_factory_pages_000_imppage_get_widgets', $widgets, $position, $this->plugin, $this);
+				/**
+				 * @since 4.0.9 - является устаревшим
+				 */
+				$widgets = wbcr_factory_000_apply_filters_deprecated('wbcr_factory_pages_000_imppage_get_widgets', array(
+					$widgets, $position, $this->plugin, $this
+				), '4.0.9', 'wbcr/factory/pages/impressive/widgets');
+
+				/**
+				 * @since 4.0.1 - добавлен
+				 * @since 4.0.9 - изменено имя
+				 */
+				$widgets = apply_filters('wbcr/factory/pages/impressive/widgets', $widgets, $position, $this->plugin, $this);
 
 				return $widgets;
 			}
-			
-			/**
-			 *
-			 */
+
 			protected function showOptions()
 			{
 				$form = new Wbcr_FactoryForms000_Form(array(
@@ -662,19 +693,13 @@
 				$options = $this->getOptions();
 				
 				if( isset($options[0]) && isset($options[0]['items']) && is_array($options[0]['items']) ) {
-					
-					/*array_unshift($options[0]['items'], array(
-						'type' => 'html',
-						'html' => array($this, 'printAllNotices')
-					));*/
-					
 					foreach($options[0]['items'] as $key => $value) {
 						
 						if( $value['type'] == 'div' ) {
 							if( isset($options[0]['items'][$key]['items']) && !empty($options[0]['items'][$key]['items']) ) {
 								foreach($options[0]['items'][$key]['items'] as $group_key => $group_value) {
-									$options[0]['items'][$key]['items'][$group_key]['layout']['column-left'] = '6';
-									$options[0]['items'][$key]['items'][$group_key]['layout']['column-right'] = '6';
+									$options[0]['items'][$key]['items'][$group_key]['layout']['column-left'] = '4';
+									$options[0]['items'][$key]['items'][$group_key]['layout']['column-right'] = '8';
 								}
 								
 								continue;
@@ -690,8 +715,8 @@
 							'list',
 							'wp-editor'
 						)) ) {
-							$options[0]['items'][$key]['layout']['column-left'] = '6';
-							$options[0]['items'][$key]['layout']['column-right'] = '6';
+							$options[0]['items'][$key]['layout']['column-left'] = '4';
+							$options[0]['items'][$key]['layout']['column-right'] = '8';
 						}
 					}
 				}
@@ -707,13 +732,39 @@
 						exit;
 					}
 
-					do_action('wbcr_factory_000_imppage_before_form_save', $form, $this->plugin, $this);
+					/**
+					 * @since 4.0.9 - является устаревшим
+					 */
+					wbcr_factory_000_do_action_deprecated('wbcr_factory_000_imppage_before_form_save', array(
+						$form,
+						$this->plugin,
+						$this
+					), '4.0.9', 'wbcr/factory/pages/impressive/before_form_save');
+
+					/**
+					 * @since 4.0.1 - добавлен
+					 * @since 4.0.9 - изменено имя
+					 */
+					do_action('wbcr/factory/pages/impressive/before_form_save', $form, $this->plugin, $this);
 
 					$this->beforeFormSave();
 					
 					$form->save();
 
-					do_action('wbcr_factory_000_imppage_form_saved', $form, $this->plugin, $this);
+					/**
+					 * @since 4.0.9 - является устаревшим
+					 */
+					wbcr_factory_000_do_action_deprecated('wbcr_factory_000_imppage_form_saved', array(
+						$form,
+						$this->plugin,
+						$this
+					), '4.0.9', 'wbcr/factory/pages/impressive/form_saved');
+
+					/**
+					 * @since 4.0.1 - добавлен
+					 * @since 4.0.9 - изменено имя
+					 */
+					do_action('wbcr/factory/pages/impressive/form_saved', $form, $this->plugin, $this);
 
 					$this->formSaved();
 					
@@ -749,7 +800,7 @@
 									</div>
 								</div>
 								<?php if( $this->show_right_sidebar_in_options ): ?>
-									<div class="wbcr-factory-right-sidebar-section">
+									<div class="wbcr-factory-right-sidebar-section" style="min-height:<?= $min_height ?>px">
 										<?php $this->showRightSidebar(); ?>
 									</div>
 								<?php endif; ?>
@@ -769,7 +820,7 @@
 			<?php
 			}
 			
-			protected function showPage()
+			protected function showPage($content = null)
 			{ ?>
 				<div id="WBCR" class="wrap">
 					<div class="wbcr-factory-pages-000-impressive-page-template factory-bootstrap-000 factory-fontawesome-000">
@@ -792,12 +843,16 @@
 									<?php $this->showPageSubMenu() ?>
 									<div class="wbcr-factory-content" style="min-height:<?= $min_height ?>px">
 										<?php $this->printAllNotices(); ?>
-										<?php $this->showPageContent() ?>
+										<?php if( empty($content) ): ?>
+											<?php $this->showPageContent() ?>
+										<?php else: ?>
+											<?php echo $content; ?>
+										<?php endif; ?>
 									</div>
 								</div>
 
 								<?php if( $this->show_right_sidebar_in_options ): ?>
-									<div class="wbcr-factory-right-sidebar-section">
+									<div class="wbcr-factory-right-sidebar-section" style="min-height:<?= $min_height ?>px">
 										<?php $this->showRightSidebar(); ?>
 									</div>
 								<?php endif; ?>
@@ -816,90 +871,6 @@
 			public function showPageContent()
 			{
 				// используется в классе потомке
-			}
-
-			public function showInfoWidget()
-			{
-				?>
-				<div class="wbcr-factory-sidebar-widget">
-					<ul>
-						<li>
-						<span class="wbcr-factory-hint-icon-simple wbcr-factory-simple-red">
-							<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAQAAABKmM6bAAAAUUlEQVQIHU3BsQ1AQABA0X/komIrnQHYwyhqQ1hBo9KZRKL9CBfeAwy2ri42JA4mPQ9rJ6OVt0BisFM3Po7qbEliru7m/FkY+TN64ZVxEzh4ndrMN7+Z+jXCAAAAAElFTkSuQmCC" alt=""/>
-						</span>
-							- <?php _e('A neutral setting that can not harm your site, but you must be sure that you need to use it.', 'wbcr_factory_pages_000'); ?>
-						</li>
-						<li>
-						<span class="wbcr-factory-hint-icon-simple wbcr-factory-simple-grey">
-							<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAQAAABKmM6bAAAAUUlEQVQIHU3BsQ1AQABA0X/komIrnQHYwyhqQ1hBo9KZRKL9CBfeAwy2ri42JA4mPQ9rJ6OVt0BisFM3Po7qbEliru7m/FkY+TN64ZVxEzh4ndrMN7+Z+jXCAAAAAElFTkSuQmCC" alt=""/>
-						</span>
-							- <?php _e('When set this option, you must be careful. Plugins and themes may depend on this function. You must be sure that you can disable this feature for the site.', 'wbcr_factory_pages_000'); ?>
-						</li>
-						<li>
-						<span class="wbcr-factory-hint-icon-simple wbcr-factory-simple-green">
-							<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAQAAABKmM6bAAAAUUlEQVQIHU3BsQ1AQABA0X/komIrnQHYwyhqQ1hBo9KZRKL9CBfeAwy2ri42JA4mPQ9rJ6OVt0BisFM3Po7qbEliru7m/FkY+TN64ZVxEzh4ndrMN7+Z+jXCAAAAAElFTkSuQmCC" alt=""/>
-						</span>
-							- <?php _e('Absolutely safe setting, We recommend to use.', 'wbcr_factory_pages_000'); ?>
-						</li>
-					</ul>
-					----------<br>
-					
-					<p><?php _e('Hover to the icon to get help for the feature you selected.', 'wbcr_factory_pages_000'); ?></p>
-				</div>
-			<?php
-			}
-			
-			public function showRatingWidget(array $args)
-			{
-				if( !isset($args[0]) || empty($args[0]) ) {
-					$page_url = "https://goo.gl/tETE2X";
-				} else {
-					$page_url = $args[0];
-				}
-				
-				$page_url = apply_filters('wbcr_factory_pages_000_imppage_rating_widget_url', $page_url, $this->plugin->getPluginName(), $this->getResultId());
-				
-				?>
-				<div class="wbcr-factory-sidebar-widget">
-					<p>
-						<strong><?php _e('Do you want the plugin to improved and update?', 'wbcr_factory_pages_000'); ?></strong>
-					</p>
-					
-					<p><?php _e('Help the author, leave a review on wordpress.org. Thanks to feedback, I will know that the plugin is really useful to you and is needed.', 'wbcr_factory_pages_000'); ?></p>
-					
-					<p><?php _e('And also write your ideas on how to extend or improve the plugin.', 'wbcr_factory_pages_000'); ?></p>
-					
-					<p>
-						<i class="wbcr-factory-icon-5stars"></i>
-						<a href="<?= $page_url ?>" title="Go rate us" target="_blank">
-							<strong><?php _e('Go rate us and push ideas', 'wbcr_factory_pages_000'); ?></strong>
-						</a>
-					</p>
-				</div>
-			<?php
-			}
-			
-			public function showDonateWidget()
-			{
-				?>
-				<div class="wbcr-factory-sidebar-widget">
-					<p>
-						<strong><?php _e('Donation for plugin development', 'wbcr_factory_pages_000'); ?></strong>
-					</p>
-					
-					<?php if( get_locale() !== 'ru_RU' ): ?>
-						<form id="wbcr-factory-paypal-donation-form" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-							<input type="hidden" name="cmd" value="_s-xclick">
-							<input type="hidden" name="hosted_button_id" value="VDX7JNTQPNPFW">
-							
-							<div class="wbcr-factory-donation-price">5$</div>
-							<input type="image" src="<?= FACTORY_PAGES_000_URL ?>/templates/assets/img/paypal-donate.png" border="0" name="submit" alt="PayPal – The safer, easier way to pay online!">
-						</form>
-					<?php else: ?>
-						<iframe frameborder="0" allowtransparency="true" scrolling="no" src="https://money.yandex.ru/embed/donate.xml?account=410011242846510&quickpay=donate&payment-type-choice=on&mobile-payment-type-choice=on&default-sum=300&targets=%D0%9D%D0%B0+%D0%BF%D0%BE%D0%B4%D0%B4%D0%B5%D1%80%D0%B6%D0%BA%D1%83+%D0%BF%D0%BB%D0%B0%D0%B3%D0%B8%D0%BD%D0%B0+%D0%B8+%D1%80%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D1%83+%D0%BD%D0%BE%D0%B2%D1%8B%D1%85+%D1%84%D1%83%D0%BD%D0%BA%D1%86%D0%B8%D0%B9.+&target-visibility=on&project-name=Webcraftic&project-site=&button-text=05&comment=on&hint=%D0%9A%D0%B0%D0%BA%D1%83%D1%8E+%D1%84%D1%83%D0%BD%D0%BA%D1%86%D0%B8%D1%8E+%D0%BD%D1%83%D0%B6%D0%BD%D0%BE+%D0%B4%D0%BE%D0%B1%D0%B0%D0%B2%D0%B8%D1%82%D1%8C+%D0%B2+%D0%BF%D0%BB%D0%B0%D0%B3%D0%B8%D0%BD%3F&mail=on&successURL=" width="508" height="187"></iframe>
-					<?php endif; ?>
-				</div>
-			<?php
 			}
 			
 			/**
