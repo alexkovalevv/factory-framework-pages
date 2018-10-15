@@ -147,7 +147,7 @@
 
 				$type = $this->network ? 'net' : 'set';
 
-				$factory_impressive_page_menu[$this->plugin->getPluginName()][$type][$this->getResultId()] = array(
+				$factory_impressive_page_menu[$this->getMenuScope()][$type][$this->getResultId()] = array(
 					'type' => $this->type, // page, options
 					'url' => $this->getBaseUrl(),
 					'title' => $this->getMenuTitle() . ' <span class="dashicons' . $dashicon . '"></span>',
@@ -168,7 +168,7 @@
 
 				$type = $this->network ? 'net' : 'set';
 
-				return $factory_impressive_page_menu[$this->plugin->getPluginName()][$type];
+				return $factory_impressive_page_menu[$this->getMenuScope()][$type];
 			}
 			
 			/**
@@ -199,7 +199,7 @@
 				), 'bootstrap');
 				
 				$this->styles->add(FACTORY_PAGES_000_URL . '/templates/assets/css/impressive.page.template.css');
-				//$this->styles->add('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+
 			}
 
 			/**
@@ -207,7 +207,10 @@
 			 */
 			public function getMenuTitle()
 			{
-				return $this->menu_title;
+				/**				 *
+				 * @since 4.0.9 - добавлен
+				 */
+				return apply_filters('wbcr/factory/pages/impressive/menu_title', $this->menu_title, $this->plugin->getPluginName(), $this->id);
 			}
 
 			/**
@@ -215,23 +218,61 @@
 			 */
 			public function getPageTitle()
 			{
-				return $this->getMenuTitle();
+				/**
+				 * @since 4.0.9 - добавлен
+				 */
+				return apply_filters('wbcr/factory/pages/impressive/page_title', $this->getMenuTitle(), $this->plugin->getPluginName(), $this->id);
 			}
 
 			/**
+			 * Получает заголовок плагина (обычно используется для брендинга)
+			 *
 			 * @return string
 			 */
 			public function getPluginTitle()
 			{
-				return apply_filters('wbcr/factory/imppage/plugin_title', $this->plugin->getPluginTitle(), $this->plugin->getPluginName());
+				/**
+				 * @since 4.0.8 - добавлен
+				 * @since 4.0.9 - является устаревшим
+				 */
+				$plugin_title = wbcr_factory_000_apply_filters_deprecated('wbcr/factory/imppage/plugin_title', array(
+					$this->plugin->getPluginTitle(),
+					$this->plugin->getPluginName()
+				), '4.0.9', 'wbcr/factory/pages/impressive/plugin_title');
+
+				/**
+				 * @since 4.0.9 - является устаревшим
+				 */
+				$plugin_title = apply_filters('wbcr/factory/pages/impressive/plugin_title', $plugin_title, $this->plugin->getPluginName());
+
+				return $plugin_title;
 			}
 
 			/**
+			 * Получает полную ссылку текущей страницы
+			 *
 			 * @return string
 			 */
 			public function getPageUrl()
 			{
-				return $this->getBaseUrl();
+				/**
+				 * @since 4.0.9 - добавлен
+				 */
+				return apply_filters('wbcr/factory/pages/impressive/base_url', $this->getBaseUrl(), $this->plugin->getPluginName(), $this->id);
+			}
+
+			/**
+			 * Пространство имен для меню плагина
+			 * Можно приклеить меню к другому плагину, просто перезаписав этот метод в дочернем классе
+			 *
+			 * @return string
+			 */
+			public function getMenuScope()
+			{
+				/**
+				 * @since 4.0.9 - добавлен
+				 */
+				return apply_filters('wbcr/factory/pages/impressive/menu_scope', $this->plugin->getPluginName(), $this->plugin->getPluginName(), $this->id);
 			}
 			
 			/**
@@ -242,6 +283,8 @@
 			 */
 			public function getOption($option_name, $default = false)
 			{
+				_deprecated_function( __METHOD__, '4.0.9', '$this->plugin->getOption()' );
+
 				return $this->plugin->getOption($option_name, $default);
 			}
 
@@ -305,7 +348,8 @@
 				 * @since 4.0.9 - является устаревшим
 				 */
 				wbcr_factory_000_do_action_deprecated('wbcr_factory_000_imppage_after_form_save', array(
-					$this->plugin, $this
+					$this->plugin,
+					$this
 				), '4.0.9', 'wbcr/factory/pages/impressive/after_form_save');
 
 				/**
@@ -419,7 +463,8 @@
 				 * @since 4.0.9 - является устаревшим
 				 */
 				wbcr_factory_000_do_action_deprecated('wbcr_factory_pages_000_imppage_print_all_notices', array(
-					$this->plugin, $this
+					$this->plugin,
+					$this
 				), '4.0.9', 'wbcr/factory/pages/impressive/print_all_notices');
 
 				/**
@@ -669,7 +714,10 @@
 				 * @since 4.0.9 - является устаревшим
 				 */
 				$widgets = wbcr_factory_000_apply_filters_deprecated('wbcr_factory_pages_000_imppage_get_widgets', array(
-					$widgets, $position, $this->plugin, $this
+					$widgets,
+					$position,
+					$this->plugin,
+					$this
 				), '4.0.9', 'wbcr/factory/pages/impressive/widgets');
 
 				/**
@@ -690,7 +738,7 @@
 				
 				$form->setProvider(new Wbcr_FactoryForms000_OptionsValueProvider($this->plugin));
 				
-				$options = $this->getOptions();
+				$options = $this->getPopulateOptions();
 				
 				if( isset($options[0]) && isset($options[0]['items']) && is_array($options[0]['items']) ) {
 					foreach($options[0]['items'] as $key => $value) {
