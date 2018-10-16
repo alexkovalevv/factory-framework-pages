@@ -645,6 +645,11 @@
 			protected function showHeader()
 			{
 				?>
+				<style>
+					.updated, .notice, .error {
+						display: none !important;
+					}
+				</style>
 				<div class="wbcr-factory-page-header">
 					<div class="wbcr-factory-header-logo"><?= $this->getPluginTitle(); ?>
 						<span class="version"><?= $this->plugin->getPluginVersion() ?> </span>
