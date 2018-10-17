@@ -199,7 +199,6 @@
 				), 'bootstrap');
 				
 				$this->styles->add(FACTORY_PAGES_000_URL . '/templates/assets/css/impressive.page.template.css');
-
 			}
 
 			/**
@@ -207,7 +206,7 @@
 			 */
 			public function getMenuTitle()
 			{
-				/**				 *
+				/**                 *
 				 * @since 4.0.9 - добавлен
 				 */
 				return apply_filters('wbcr/factory/pages/impressive/menu_title', $this->menu_title, $this->plugin->getPluginName(), $this->id);
@@ -283,7 +282,7 @@
 			 */
 			public function getOption($option_name, $default = false)
 			{
-				_deprecated_function( __METHOD__, '4.0.9', '$this->plugin->getOption()' );
+				_deprecated_function(__METHOD__, '4.0.9', '$this->plugin->getOption()');
 
 				return $this->plugin->getOption($option_name, $default);
 			}
@@ -743,7 +742,7 @@
 				
 				$form->setProvider(new Wbcr_FactoryForms000_OptionsValueProvider($this->plugin));
 				
-				$options = $this->getPopulateOptions();
+				$options = $this->getPageOptions();
 				
 				if( isset($options[0]) && isset($options[0]['items']) && is_array($options[0]['items']) ) {
 					foreach($options[0]['items'] as $key => $value) {
@@ -916,6 +915,14 @@
 					</div>
 				</div>
 			<?php
+			}
+
+			/**
+			 * @return array
+			 */
+			public function getPageOptions()
+			{
+				// используется в классе потомке
 			}
 			
 			/**
