@@ -126,11 +126,6 @@
 				parent::__construct($plugin);
 				
 				$this->title_plugin_action_link = __('Settings', 'wbcr_factory_pages_000');
-				
-				//if( $this->type == 'options' ) {
-				//$this->show_right_sidebar_in_options = true;
-				//$this->show_bottom_sidebar = false;
-				//}
 
 				$this->setPageMenu();
 			}
@@ -150,7 +145,7 @@
 				$factory_impressive_page_menu[$this->getMenuScope()][$type][$this->getResultId()] = array(
 					'type' => $this->type, // page, options
 					'url' => $this->getBaseUrl(),
-					'title' => $this->getMenuTitle() . ' <span class="dashicons' . $dashicon . '"></span>',
+					'title' => $this->getPageTitle() . ' <span class="dashicons' . $dashicon . '"></span>',
 					'short_description' => $short_description,
 					'position' => $this->page_menu_position,
 					'parent' => $this->page_parent_page
@@ -199,28 +194,6 @@
 				), 'bootstrap');
 				
 				$this->styles->add(FACTORY_PAGES_000_URL . '/templates/assets/css/impressive.page.template.css');
-			}
-
-			/**
-			 * @return string
-			 */
-			public function getMenuTitle()
-			{
-				/**                 *
-				 * @since 4.0.9 - добавлен
-				 */
-				return apply_filters('wbcr/factory/pages/impressive/menu_title', $this->menu_title, $this->plugin->getPluginName(), $this->id);
-			}
-
-			/**
-			 * @return string
-			 */
-			public function getPageTitle()
-			{
-				/**
-				 * @since 4.0.9 - добавлен
-				 */
-				return apply_filters('wbcr/factory/pages/impressive/page_title', $this->getMenuTitle(), $this->plugin->getPluginName(), $this->id);
 			}
 
 			/**
@@ -661,9 +634,8 @@
 					<?php endif; ?>
 
 					<div class="wbcr-factory-control">
-						<a href="<?= $this->getBaseUrl('clearfy_settings') ?>" class="wbcr-factory-button wbcr-factory-type-settings">
-							<?php _e('Clearfy settings', 'wbcr_factory_pages_000'); ?>
-						</a>
+						<?php do_action('wbcr/factory/pages/impressive/header',$this->plugin->getPluginName()) ?>
+
 						<?php if( $this->type == 'options' ): ?>
 							<input name="<?= $this->plugin->getPluginName() ?>_save_action" class="wbcr-factory-button wbcr-factory-type-save" type="submit" value="<?php _e('Save', 'wbcr_factory_pages_000'); ?>">
 
@@ -673,6 +645,12 @@
 				</div>
 			<?php
 			}
+
+			protected function isShowRightSidebar() {
+				$widgets = $this->getPageWidgets('right');
+
+				return !empty($widgets) && $this->show_right_sidebar_in_options;
+			}
 			
 			protected function showRightSidebar()
 			{
@@ -681,7 +659,7 @@
 				if( empty($widgets) ) {
 					return;
 				}
-				
+
 				foreach($widgets as $widget_content):
 					echo $widget_content;
 				endforeach;
@@ -841,7 +819,7 @@
 								}
 							?>
 							<div class="wbcr-factory-page-inner-wrap">
-								<div class="wbcr-factory-content-section<?php if( !$this->show_right_sidebar_in_options ): echo ' wbcr-fullwidth'; endif ?>">
+								<div class="wbcr-factory-content-section<?php if( !$this->isShowRightSidebar() ): echo ' wbcr-fullwidth'; endif ?>">
 									<?php $this->showPageSubMenu() ?>
 									<div class="wbcr-factory-content" style="min-height:<?= $min_height ?>px">
 										<form method="post" class="form-horizontal">
@@ -851,8 +829,8 @@
 										</form>
 									</div>
 								</div>
-								<?php if( $this->show_right_sidebar_in_options ): ?>
-									<div class="wbcr-factory-right-sidebar-section" style="min-height:<?= $min_height ?>px">
+								<?php if( $this->isShowRightSidebar() ): ?>
+									<div class="wbcr-factory-right-sidebar-section">
 										<?php $this->showRightSidebar(); ?>
 									</div>
 								<?php endif; ?>
@@ -891,7 +869,7 @@
 								}
 							?>
 							<div class="wbcr-factory-page-inner-wrap">
-								<div class="wbcr-factory-content-section<?php if( !$this->show_right_sidebar_in_options ): echo ' wbcr-fullwidth'; endif ?>">
+								<div class="wbcr-factory-content-section<?php if( !$this->isShowRightSidebar() ): echo ' wbcr-fullwidth'; endif ?>">
 									<?php $this->showPageSubMenu() ?>
 									<div class="wbcr-factory-content" style="min-height:<?= $min_height ?>px">
 										<?php $this->printAllNotices(); ?>
@@ -903,7 +881,7 @@
 									</div>
 								</div>
 
-								<?php if( $this->show_right_sidebar_in_options ): ?>
+								<?php if( $this->isShowRightSidebar() ): ?>
 									<div class="wbcr-factory-right-sidebar-section" style="min-height:<?= $min_height ?>px">
 										<?php $this->showRightSidebar(); ?>
 									</div>

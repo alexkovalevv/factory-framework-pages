@@ -179,6 +179,34 @@
 			{
 				return $this->plugin->getPluginName();
 			}
+
+
+			/**
+			 * @return string
+			 */
+			public function getMenuTitle()
+			{
+				$menu_title = !$this->menu_title ? $this->page_title : $this->menu_title;
+
+				/**
+				 * @since 4.0.9 - добавлен
+				 */
+				return apply_filters('wbcr/factory/pages/impressive/menu_title', $menu_title, $this->plugin->getPluginName(), $this->id);
+			}
+
+			/**
+			 * @return string
+			 */
+			public function getPageTitle()
+			{
+
+				$page_title = !$this->page_title ? $this->getMenuTitle() : $this->page_title;
+
+				/**
+				 * @since 4.0.9 - добавлен
+				 */
+				return apply_filters('wbcr/factory/pages/impressive/page_title', $page_title, $this->plugin->getPluginName(), $this->id);
+			}
 			
 			/**
 			 * @param null $id
@@ -272,23 +300,16 @@
 				if( empty($this->capabilitiy) ) {
 					$this->capabilitiy = 'manage_options';
 				}
-				
-				$this->page_title = !$this->page_title ? $this->menu_title : $this->page_title;
-				
-				$this->menu_title = !$this->menu_title ? $this->page_title : $this->menu_title;
-				
-				$this->page_title = apply_filters('wbcr_factory_page_title_' . $result_id, $this->page_title);
-				$this->menu_title = apply_filters('wbcr_factory_menu_title_' . $result_id, $this->menu_title);
 
 				// submenu
 				if( $this->menu_target ) {
-					add_submenu_page($this->menu_target, $this->page_title, $this->menu_title, $this->capabilitiy, $result_id, array(
+					add_submenu_page($this->menu_target, $this->getPageTitle(), $this->getMenuTitle(), $this->capabilitiy, $result_id, array(
 						$this,
 						'show'
 					));
 					// global menu
 				} else {
-					add_menu_page($this->page_title, $this->menu_title, $this->capabilitiy, $result_id, array(
+					add_menu_page($this->getPageTitle(), $this->getMenuTitle(), $this->capabilitiy, $result_id, array(
 						$this,
 						'show'
 					), null, $this->menu_position);
@@ -451,7 +472,7 @@
 			 */
 			function addLinkToPluginActions($links)
 			{
-				$link_title = !empty($this->title_plugin_action_link) ? $this->title_plugin_action_link : $this->menu_title;
+				$link_title = !empty($this->title_plugin_action_link) ? $this->title_plugin_action_link : $this->getMenuTitle();
 				
 				$settings_link = '<a href="' . $this->getBaseUrl() . '">' . $link_title . '</a>';
 				array_unshift($links, $settings_link);
