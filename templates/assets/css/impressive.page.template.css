@@ -124,13 +124,20 @@
   border: 0;
 }
 #WBCR .wbcr-factory-pages-000-impressive-page-template .wbcr-factory-page-inner-wrap .nav-tab-active {
-  background: #efefef;
+  background: #efefef !important;
+  margin-bottom: -2px !important;
+  border-bottom: 1px solid #efefef !important;
 }
 #WBCR .wbcr-factory-pages-000-impressive-page-template .wbcr-factory-page-inner-wrap .nav-tab:first-child {
-  margin-left: 80px !important;
+  margin: 0;
 }
 #WBCR .wbcr-factory-pages-000-impressive-page-template .wbcr-factory-page-inner-wrap .nav-tab:hover {
   background: #f7f7f7;
+}
+#WBCR .wbcr-factory-pages-000-impressive-page-template .wbcr-factory-page-inner-wrap .nav-tab {
+  border: 2px solid #dedede;
+  border-bottom: 0;
+  box-shadow: -1px 0 0 rgba(0, 0, 0, 0.1);
 }
 #WBCR .wbcr-factory-pages-000-impressive-page-template .wbcr-factory-page-inner-wrap .nav-tab:active,
 #WBCR .wbcr-factory-pages-000-impressive-page-template .wbcr-factory-page-inner-wrap .nav-tab:focus {
@@ -458,6 +465,14 @@
 #WBCR .wbcr-factory-pages-000-impressive-page-template #wbcr-factory-confirm-dialog .wbcr-factory-confirm-hint {
   margin-bottom: 15px;
   color: #7b7b7b;
+}
+@media screen and (max-width: 1367px) {
+  #WBCR .wbcr-factory-pages-000-impressive-page-template .wbcr-factory-content-section {
+    width: 69.6%;
+  }
+  #WBCR .wbcr-factory-pages-000-impressive-page-template .wbcr-factory-right-sidebar-section {
+    width: 30%;
+  }
 }
 @media screen and (max-width: 1320px) {
   #WBCR .wbcr-factory-pages-000-impressive-page-template .wbcr-factory-content-section {

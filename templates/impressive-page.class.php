@@ -140,9 +140,11 @@
 				$dashicon = (!empty($this->page_menu_dashicon)) ? ' ' . $this->page_menu_dashicon : '';
 				$short_description = (!empty($this->page_menu_short_description)) ? ' ' . $this->page_menu_short_description : '';
 
-				$type = $this->network ? 'net' : 'set';
+				if( is_multisite() && is_network_admin() && !$this->network ) {
+					return;
+				}
 
-				$factory_impressive_page_menu[$this->getMenuScope()][$type][$this->getResultId()] = array(
+				$factory_impressive_page_menu[$this->getMenuScope()][$this->getResultId()] = array(
 					'type' => $this->type, // page, options
 					'url' => $this->getBaseUrl(),
 					'title' => $this->getPageTitle() . ' <span class="dashicons' . $dashicon . '"></span>',
@@ -161,9 +163,7 @@
 			{
 				global $factory_impressive_page_menu;
 
-				$type = $this->network ? 'net' : 'set';
-
-				return $factory_impressive_page_menu[$this->getMenuScope()][$type];
+				return $factory_impressive_page_menu[$this->getMenuScope()];
 			}
 			
 			/**
@@ -634,7 +634,7 @@
 					<?php endif; ?>
 
 					<div class="wbcr-factory-control">
-						<?php do_action('wbcr/factory/pages/impressive/header',$this->plugin->getPluginName()) ?>
+						<?php do_action('wbcr/factory/pages/impressive/header', $this->plugin->getPluginName()) ?>
 
 						<?php if( $this->type == 'options' ): ?>
 							<input name="<?= $this->plugin->getPluginName() ?>_save_action" class="wbcr-factory-button wbcr-factory-type-save" type="submit" value="<?php _e('Save', 'wbcr_factory_pages_000'); ?>">
@@ -646,7 +646,8 @@
 			<?php
 			}
 
-			protected function isShowRightSidebar() {
+			protected function isShowRightSidebar()
+			{
 				$widgets = $this->getPageWidgets('right');
 
 				return !empty($widgets) && $this->show_right_sidebar_in_options;

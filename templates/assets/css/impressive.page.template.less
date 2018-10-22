@@ -154,15 +154,20 @@
         border: 0;
       }
       .nav-tab-active {
-        background: #efefef;
+        background: #efefef !important;
+        margin-bottom: -2px !important;
+        border-bottom: 1px solid #efefef !important;
       }
       .nav-tab:first-child {
-        margin-left: 80px !important;
+        margin: 0;
       }
       .nav-tab:hover {
         background: #f7f7f7;
       }
       .nav-tab {
+        border: 2px solid #dedede;
+        border-bottom: 0;
+        box-shadow: -1px 0 0 rgba(0, 0, 0, 0.1);
         &:active, &:focus {
           box-shadow: none;
           outline: none;
@@ -530,6 +535,20 @@
       .wbcr-factory-confirm-hint {
         margin-bottom: 15px;
         color: #7b7b7b;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 1367px) {
+  #WBCR {
+    .wbcr-factory-pages-000-impressive-page-template {
+      .wbcr-factory-content-section {
+        width: 69.6%;
+      }
+
+      .wbcr-factory-right-sidebar-section {
+        width: 30%;
       }
     }
   }

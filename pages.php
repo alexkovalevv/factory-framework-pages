@@ -39,7 +39,11 @@
 				if( !isset(self::$pages[$plugin->getPluginName()]) ) {
 					self::$pages[$plugin->getPluginName()] = array();
 				}
-				self::$pages[$plugin->getPluginName()][] = new $class_name($plugin);
+				$page = new $class_name($plugin);
+				if( is_multisite() && is_network_admin() && !$page->available_for_multisite ) {
+					return;
+				}
+				self::$pages[$plugin->getPluginName()][] = $page;
 			}
 
 			public static function actionAdminMenu()
