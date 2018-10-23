@@ -338,7 +338,7 @@
 				/**
 				 * @since 4.0.9 - является устаревшим
 				 */
-				$redirect_args = wbcr_factory_000_apply_filters_deprecated('wbcr_factory_000_imppage_after_form_save_redirect_args', $redirect_args, '4.0.9', 'wbcr/factory/pages/impressive/save_redirect_args');
+				$redirect_args = wbcr_factory_000_apply_filters_deprecated('wbcr_factory_000_imppage_after_form_save_redirect_args', array($redirect_args), '4.0.9', 'wbcr/factory/pages/impressive/save_redirect_args');
 
 				/**
 				 * @since 4.0.1 - добавлен
