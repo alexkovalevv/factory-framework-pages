@@ -373,31 +373,30 @@
 			 */
 			public function getActionUrl($action = null, $query_args = array())
 			{
-				$baseUrl = $this->getBaseUrl();
+				$url = $this->getBaseUrl(null, $query_args);
 
 				if( !empty($action) ) {
-					$query_args['action'] = $action;
+					$url = add_query_arg('action', $action, $url);
 				}
-				$url = add_query_arg($query_args, $baseUrl);
-				
+
 				return $url;
 			}
-			
+
 			/**
 			 * @return string
 			 */
-			protected function getBaseUrl($id = null)
+			public function getBaseUrl($id = null, $query_args = array())
 			{
 				$result_id = $this->getResultId($id);
 
 				if( $this->menu_target ) {
-					if( $this->custom_target ) {
-						return admin_url('admin.php') . '?page=' . $result_id;
-					}
-					
-					return $this->menu_target . '&page=' . $result_id;
+					$url = $this->network ? network_admin_url($this->menu_target) : admin_url($this->menu_target);
+
+					return add_query_arg(array_merge(array('page' => $result_id), $query_args), $url);
 				} else {
-					return 'admin.php?&page=' . $result_id;
+					$url = $this->network ? network_admin_url('admin.php') : admin_url('admin.php');
+
+					return add_query_arg(array_merge(array('page' => $result_id, $query_args)), $url);
 				}
 			}
 			

@@ -261,24 +261,6 @@
 			}
 
 			/**
-			 * @return string
-			 */
-			protected function getBaseUrl($id = null)
-			{
-				$result_id = $this->getResultId($id);
-				
-				if( $this->menu_target ) {
-					$url = $this->network ? network_admin_url($this->menu_target) : admin_url($this->menu_target);
-
-					return add_query_arg(array('page' => $result_id), $url);
-				} else {
-					$url = $this->network ? network_admin_url('admin.php') : admin_url('admin.php');
-
-					return add_query_arg(array('page' => $result_id), $url);
-				}
-			}
-			
-			/**
 			 * Shows a page or options
 			 *
 			 * @sinve 1.0.0

@@ -59,6 +59,21 @@
 				}
 			}
 
+			public static function getPageUrl(Wbcr_Factory000_Plugin $plugin, $page_id, $args = array())
+			{
+				if( isset(self::$pages[$plugin->getPluginName()]) ) {
+					$pages = self::$pages[$plugin->getPluginName()];
+
+					foreach($pages as $page) {
+						if( $page->id == $page_id ) {
+							return $page->getBaseUrl($page_id, $args);
+						}
+					}
+				} else {
+					_doing_it_wrong(__METHOD__, __('You are trying to call this earlier than the plugin menu will be registered.'), '4.0.8');
+				}
+			}
+
 			/**
 			 * @param Wbcr_Factory000_Plugin $plugin
 			 * @return array
